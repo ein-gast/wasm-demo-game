@@ -1,5 +1,6 @@
 /node_modules
 /*.wasm
 /add.html
+/add_dbg.html
 /main.*.js
 /REF.txt
