@@ -1,0 +1,12 @@
+{
+    "scripts": {
+        "minify": "npx uglifyjs main.js > main.u.js && npx regpack main.u.js | tail -n+1 > main.s.js",
+        "inline": "npx inliner -n -i add.html > add-inline.html"
+    },
+    "devDependencies": {
+        "inliner": "^1.13.1",
+        "regpack": "^5.0.1",
+        "uglify-js": "^3.13.4",
+        "web-resource-inliner": "^8.0.0"
+    }
+}
