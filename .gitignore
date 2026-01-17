@@ -2,5 +2,5 @@
 /*.wasm
 /add.html
 /add_dbg.html
-/main.*.js
+/main*.js
 /REF.txt
