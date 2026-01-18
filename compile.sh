@@ -1,5 +1,11 @@
-#clang --target=wasm32 --no-standard-libraries -Wl,--export-all -Wl,--no-entry -o add.wasm add.c || exit 1
-clang --target=wasm64 --no-standard-libraries -Wl,--export-all -Wl,--no-entry -o add.wasm add.c || exit 1
-chmod -x add.wasm
+#!/usr/bin/env sh
+
+. ./build.env || exit 1
+
+clang --target="$WARCH" --std c17 -Oz --no-standard-libraries \
+    -Wl,--export=init -Wl,--export=input -Wl,--export=process -Wl,--export=render -Wl,--export=__heap_base -Wl,--no-entry -Wl,--strip-all \
+    -o "$BUILD"/app.wasm "$SRC"/app.c || exit 1
+# ~ -Wl,--export-all
+chmod -x "$BUILD"/app.wasm
 
 echo OK

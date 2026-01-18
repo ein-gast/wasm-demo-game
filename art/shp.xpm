@@ -1,0 +1,25 @@
+/* XPM */
+static const char *shp[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 3 1 ",
+"  c #4B5BAB",
+". c white",
+"X c None",
+/* pixels */
+"XXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXX",
+"XX.XXXX  XXXX.XX",
+"XX..XXX  XXX..XX",
+"XX. XX    XX .XX",
+"XX..XX    XX..XX",
+"XX. X      X .XX",
+"XX..X      X..XX",
+"XX.    XX    .XX",
+"XX.XXXXXXXXXX.XX"
+};

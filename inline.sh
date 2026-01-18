@@ -1,11 +1,13 @@
 #!/usr/bin/env sh
 
+. ./build.env || exit 1
+
 # приписываем wasm к js:
-node tools/stringify.js add.wasm > main.js  || exit 1
-tail -n+2 main_tpl.js >> main.js  || exit 1
+node tools/stringify.js "$BUILD"/app.wasm > "$BUILD"/main.js  || exit 1
+tail -n+2 "$SRC"/app_tpl.js >> "$BUILD"/main.js  || exit 1
 # минимизируем js:
-npx uglifyjs main.js > main.u.js  || exit 1
-npx regpack main.u.js | tail -n+2 > main.s.js || exit 1
+npx uglifyjs --rename "$BUILD"/main.js > "$BUILD"/main.u.js  || exit 1
+npx regpack "$BUILD"/main.u.js | tail -n+2 > "$BUILD"/main.s.js || exit 1
 # встраиваем js в html:
-node tools/inline.js add_tpl.html > add.html  || exit 1
+node tools/inline.js "$SRC"/html_tpl.html "$BUILD" > "$BUILD"/app.html  || exit 1
 echo OK
