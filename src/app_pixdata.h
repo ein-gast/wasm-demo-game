@@ -42,6 +42,21 @@ struct {
             "X   XXXXXXXX   X", "XX    XXXX    XX", "XXXX        XXXX",
             "XXXXXX    XXXXXX"}};
 
+struct {
+  byte pal[256][4];
+  const int mapSize;
+  const byte palMap[2][5];
+  const byte pix[5][30 + 1];
+} pixFont3x5 = {
+    .mapSize = 2,
+    .palMap =
+        {
+         {'.', 0xFF, 0xFF, 0xFF, 0xFF},
+         {'X', 0, 0, 0, 0x00}},
+    .pix = {"...X.........X................", ".X.XX.XX.XX..X..XX.XXXX..X..X.",
+            ".X.XX....X...........X.X......", ".X.XX..XXXX.XX.XX..X..XX.X.XX.",
+            "...XX.......XX........XX......"}};
+
 // распаковывает палитру изображения
 void unpakPalArray(int mapSize, const byte palMap[][5],
                    unsigned char pal[256][4]) {
@@ -52,3 +67,5 @@ void unpakPalArray(int mapSize, const byte palMap[][5],
     pal[palMap[i][0]][3] = palMap[i][4];
   }
 }
+
+// распаковывает палитру изображения

@@ -1,0 +1,13 @@
+/* XPM */
+static const char *font[] = {
+/* columns rows colors chars-per-pixel */
+"30 5 2 1 ",
+". c white",
+"X c None",
+/* pixels */
+"...X.........X................",
+".X.XX.XX.XX..X..XX.XXXX..X..X.",
+".X.XX....X...........X.X......",
+".X.XX..XXXX.XX.XX..X..XX.X.XX.",
+"...XX.......XX........XX......"
+};

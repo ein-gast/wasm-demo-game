@@ -12,10 +12,11 @@ void putPix(byte *canvas, int bpp, int toX, int toY, const byte pal[256][4],
             const byte pix[PIXSZ][PIXSZ + 1]);
 void putProj(byte *canvas, int bpp, int toX, int toY);
 void putWall(byte *canvas, int bpp, const walSect *wal);
+void putFontNumber(byte *canvas, int bpp, int toX, int toY, int number);
 
 void init(int w, int h) {
-  state.winW = w;
-  state.winH = h;
+  state.vpW = state.winW = w;
+  state.vpH = state.winH = h;
   for (int i = 0; i < OBJCNT; i++) {
     state.obj[i].type = OTYPE_NONE;
   }
@@ -26,12 +27,11 @@ void init(int w, int h) {
   state.shield = 0;
   state.plXDir = +1;
   state.plXDir = +1;
-  state.vpW = w;
-  state.vpH = h;
   state.vpY = h;
   state.plX = w / 2;
   state.plY = state.vpY - h + PIXSZ * 1.5;
   //
+  unpakPal(pixFont3x5);
   unpakPal(pixShp16x16);
   unpakPal(pixRing16x16);
   level0(state.obj, state.vpW);
@@ -128,11 +128,11 @@ int render(int t, byte *input) {
   }
 
   // clear
-  int i = 0, cnt = state.winW * state.winH;
+  int i = 0, cnt = state.vpW * state.vpH;
   col3 l = {10, 10, 10};
-  for (int y = 0; y < state.winH; y++) {
-    for (int x = 0; x < state.winW; x++) {
-      i = x + y * state.winW;
+  for (int y = 0; y < state.vpH; y++) {
+    for (int x = 0; x < state.vpW; x++) {
+      i = x + y * state.vpW;
       l = litVal(x, state.vpY - y);
       input[i * bytePerPixel + 0] = l.r;
       input[i * bytePerPixel + 1] = l.g;
@@ -182,7 +182,8 @@ int render(int t, byte *input) {
     }
   }
 
-  
+  putFontNumber(input, bytePerPixel, state.vpW-10, 5, state.vpY);
+
   frame++;
   return state.vpY;
 }
@@ -193,17 +194,17 @@ void putPix(byte *canvas, int bpp, int toX, int toY, const byte pal[256][4],
   toX -= PIXSZ2;
   toY -= PIXSZ2;
   for (int py = 0; py < PIXSZ; py++) {
-    if (toY + py < 0 || toY + py >= state.winH) {
+    if (toY + py < 0 || toY + py >= state.vpH) {
       continue;
     }
     for (int px = 0; px < PIXSZ; px++) {
-      if (toX + px < 0 || toX + px >= state.winW) {
+      if (toX + px < 0 || toX + px >= state.vpW) {
         continue;
       }
       if (!pal[pix[py][px]][3]) {
         continue;
       }
-      ofs = toX + px + (toY + py) * state.winW;
+      ofs = toX + px + (toY + py) * state.vpW;
       canvas[ofs * bpp + 0] = pal[pix[py][px]][0];
       canvas[ofs * bpp + 1] = pal[pix[py][px]][1];
       canvas[ofs * bpp + 2] = pal[pix[py][px]][2];
@@ -216,14 +217,14 @@ void putProj(byte *canvas, int bpp, int toX, int toY) {
   int x1 = toX - PIXSZ2 + 2, y1 = toY;
   int x2 = toX + PIXSZ2 - 2, y2 = toY;
   int ofs;
-  if (x1 >= 0 && x1 < state.winW && y1 >= 0 && y1 < state.winH) {
-    ofs = x1 + y1 * state.winW;
+  if (x1 >= 0 && x1 < state.vpW && y1 >= 0 && y1 < state.vpH) {
+    ofs = x1 + y1 * state.vpW;
     canvas[ofs * bpp + 0] = 0;
     canvas[ofs * bpp + 1] = 255;
     canvas[ofs * bpp + 2] = 0;
   }
-  if (x2 >= 0 && x2 < state.winW && y2 >= 0 && y2 < state.winH) {
-    ofs = x2 + y2 * state.winW;
+  if (x2 >= 0 && x2 < state.vpW && y2 >= 0 && y2 < state.vpH) {
+    ofs = x2 + y2 * state.vpW;
     canvas[ofs * bpp + 0] = 0;
     canvas[ofs * bpp + 1] = 255;
     canvas[ofs * bpp + 2] = 0;
@@ -233,18 +234,18 @@ void putProj(byte *canvas, int bpp, int toX, int toY) {
 void putWall(byte *canvas, int bpp, const walSect *wal) {
   int y1 = state.vpY - wal->y - wal->yDist;
   int y2 = y1 + wal->yDist;
-  if ((y1 > state.winH && y2 > state.winH) || (y1 < 0 && y2 < 0)) {
+  if ((y1 > state.vpW && y2 > state.vpH) || (y1 < 0 && y2 < 0)) {
     return;
   }
 
   int ofs, x, y;
   for (y = y1; y < y2; y++) {
-    if (y >= state.winH || y < 0) {
+    if (y >= state.vpH || y < 0) {
       continue;
     }
 
-    for (x = 0; x < state.winW; x++) {
-      ofs = x + y * state.winW;
+    for (x = 0; x < state.vpH; x++) {
+      ofs = x + y * state.vpW;
       // canvas[ofs * bpp + 0] = 50;
       // canvas[ofs * bpp + 1] = 50;
       // canvas[ofs * bpp + 2] = 50;
@@ -256,5 +257,36 @@ void putWall(byte *canvas, int bpp, const walSect *wal) {
         canvas[ofs * bpp + 2] = 100;
       }
     }
+  }
+}
+
+void putFontNumber(byte *canvas, int bpp, int toX, int toY, int number) {
+  auto pal = pixFont3x5.pal;
+  auto pix = pixFont3x5.pix;
+  int ofs, digitX, rangeX = 0;
+
+  while (number > 0) {
+    digitX = (number % 10) * 3;
+
+    for (int py = 0; py < 5; py++) {
+      if (toY + py < 0 || toY + py >= state.vpH) {
+        continue;
+      }
+      for (int px = 0; px < 3; px++) {
+        if (toX + px < 0 || toX + px >= state.vpW) {
+          continue;
+        }
+        if (!pal[pix[py][digitX + px]][3]) {
+          continue;
+        }
+        ofs = toX - rangeX + px + (toY + py) * state.vpW;
+        canvas[ofs * bpp + 0] = pal[pix[py][digitX + px]][0];
+        canvas[ofs * bpp + 1] = pal[pix[py][digitX + px]][1];
+        canvas[ofs * bpp + 2] = pal[pix[py][digitX + px]][2];
+      }
+    }
+
+    number = number / 10;
+    rangeX += 3 + 1;
   }
 }
