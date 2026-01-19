@@ -14,8 +14,35 @@ const byte OTYPE_NONE = 0, OTYPE_ERING = 1, OTYPE_EBOX = 2, OTYPE_PWPN = 101,
 typedef struct {
   byte type;
   int x, y;
-} objstate;
+  // int light_val;
+} objState;
 
-// размер пула объектов
-#define OBJCNT (50)
-#define PROJCNT (50)
+typedef struct {byte r, g, b;} col3;
+
+typedef struct {
+  int x, y;
+  int val;
+  byte r, g, b;
+} lightState;
+
+/*
+               mXRigth
+  xLeft   mxLeft  |    xRight
+      V      V    V     V 
+  ----|      |----|     |----
+*/
+typedef struct {
+  int y;
+  int yDist;
+  int xLeft;
+  int xRight;
+  int mXLeft;
+  int mXRight;
+  int index;
+} walSect;
+
+// размеры пулов объектов
+#define OBJCNT (20) // противники и поверапы
+#define PROJCNT (20) // "выстрелы"
+#define LITCNT (20) // источники света
+#define WALCNT (20) // секции стен

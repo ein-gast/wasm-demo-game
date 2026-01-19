@@ -1,30 +1,38 @@
 #include "app_defs.h"
-// objstate obj[OBJCNT];
-// objstate projectl[PROJCNT];
 
 struct {
   // screen=window size
-  int win_w, win_h;
+  int winW, winH;
   // viewport
-  int vp_y, vp_w, vp_h;
+  int vpY, vpW, vpH;
   // player
-  int pl_y, pl_x, pl_xdir;
+  int plY, plX, plXDir;
   // powerups
   int ammo, shield;
 
   // scene objects
-  objstate obj[OBJCNT];
-  objstate projctl[PROJCNT];
+  objState obj[OBJCNT];
+  objState projctl[PROJCNT];
 } state;
 
-void o_ering(int i) {}
+void o_ering(int i) {
+    if (state.obj[i].y < state.vpY - state.winH - PIXSZ) {
+        state.obj[i].type = OTYPE_NONE;
+        return;
+    }
+}
 
-void o_ebox(int i) {}
+void o_ebox(int i) {
+    if (state.obj[i].y < state.vpY - state.winH - PIXSZ) {
+        state.obj[i].type = OTYPE_NONE;
+        return;
+    }
+}
 
 void o_prjctl_norm(int i) {
   for (int k = 0; k < 3; k++) {
     state.projctl[i].y++;
-    if (state.projctl[i].y > state.vp_y) {
+    if (state.projctl[i].y > state.vpY) {
         state.projctl[i].type = OTYPE_NONE;
         return;
     }
@@ -34,7 +42,7 @@ void o_prjctl_norm(int i) {
 void o_prjctl_pwr(int i) {
   for (int k = 0; k < 3; k++) {
     state.projctl[i].y++;
-    if (state.projctl[i].y > state.vp_y) {
+    if (state.projctl[i].y > state.vpY) {
         state.projctl[i].type = OTYPE_NONE;
         return;
     }
