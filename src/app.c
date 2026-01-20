@@ -36,7 +36,7 @@ void init(int w, int h) {
   state.plXDir = +1;
   state.vpY = h;
   state.plX = w / 2;
-  state.plY = state.vpY - h + PIXSZ * 1.5;
+  state.plY = state.vpY - h + PIXSZ * 2 / 3;
   state.gameover = false;
   state.score = 0;
   state.timer = -1;
@@ -90,6 +90,9 @@ void process(int t) {
 
   // player
   if (!state.gameover) {
+    if (state.vpY % 1000 == 0) {
+      state.score++;
+    }
     switch (state.plXDir) {
     case +1:
       if (state.plX < state.vpW - PIXSZ2) {
