@@ -1,14 +1,44 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 . ./build.env || exit 1
 
+OP="Uint8"
+if test ! -z "$1"; then
+    OP="$1"
+fi
+
+echo "$OP"
+
+case "$OP" in
+"Uint8")
+    OUT_HTML="$BUILD"/app_A_dbg.html
+    node tools/stringify.js "$BUILD"/app.wasm >"$BUILD"/main0.js || exit 1
+    ;;
+"GZipArray")
+    OUT_HTML="$BUILD"/app_G_dbg.html
+    node tools/stringify.js "$BUILD"/app.wasm.gz >"$BUILD"/main0.js || exit 1
+    >"$BUILD"/main.js
+    ;;
+"Base64")
+    OUT_HTML="$BUILD"/app_B_dbg.html
+    node tools/stringify.js "$BUILD"/app.wasm.base64 >"$BUILD"/main0.js || exit 1
+    >"$BUILD"/main.js
+    ;;
+*)
+    echo "??? $OP"
+    exit 1
+    ;;
+esac
+
 # приписываем wasm к js:
-#node tools/stringify.js "$BUILD"/app.wasm > "$BUILD"/main.js  || exit 1
-node tools/stringify.js "$BUILD"/app.wasm.gz > "$BUILD"/main.js  || exit 1
-tail -n+2 "$SRC"/app_tpl.js >> "$BUILD"/main.js  || exit 1
+head -n 1 "$BUILD"/main0.js >"$BUILD"/main.js || exit 1
+tail -n+2 "$SRC"/app_tpl.js >>"$BUILD"/main.js || exit 1
+tail -n 1 "$BUILD"/main0.js >>"$BUILD"/main.js || exit 1
+rm "$BUILD"/main0.js
+
 # обновляем _dbg:
-sed -e 's/main\.s\.js/main.js/' "$SRC"/html_tpl.html > "$BUILD"/app_tpl.html
-node tools/inline.js "$BUILD"/app_tpl.html "$BUILD" > "$BUILD"/app_dbg.html  || exit 1
+sed -e 's/main\.s\.js/main.js/' "$SRC"/html_tpl.html > "$BUILD"/app_tpl.html || exit 1
+node tools/inline.js "$BUILD"/app_tpl.html "$BUILD" >"$OUT_HTML" || exit 1
 rm "$BUILD"/app_tpl.html
-#sed -i -e 's/<script/<script type=module/' "$BUILD"/app_dbg.html
+
 echo DBG

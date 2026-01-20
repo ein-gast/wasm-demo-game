@@ -7,18 +7,34 @@ if (fileName.endsWith(".gz")) {
     console.log(
         `new Blob([new Uint8Array([${new Uint8Array(data).toString()}])])` +
         `.stream().pipeThrough(new DecompressionStream("gzip"))` +
-        `.getReader().read().then((code)=>{`,
-        //'console.log(code.toString())'
+        `.getReader().read().then((z)=>{Z=z.value;`,
+        "\n})",
     )
-} else {
+    return 0;
+}
+
+if (fileName.endsWith(".base64")) {
+    console.log(
+        `const Z = Uint8Array.from(atob('${data.toString()}'), c => c.charCodeAt(0))`,
+        "\n/*-*/",
+    )
+    return 0;
+}
+
+if (fileName.endsWith(".wasm")) {
 
     console.log(
-        `const code = new Uint8Array([${new Uint8Array(data).toString()}]);`,
+        `const Z = new Uint8Array([${new Uint8Array(data).toString()}]);`,
         // 'const code = new Uint8Array(' + JSON.stringify(encodeRLE1(new Uint8Array(data))) + '.reduce((res,val)=>res.concat(val[0] ? Array(val[0]).fill(val[1]) : val.slice(1)),[]));',
         // 'const code = new Uint8Array(' + JSON.stringify(encodeRLE2(new Uint8Array(data))) + '.reduce((res,val)=>res.concat(typeof(val)==="object"?Array(val[0]).fill(val[1]):[val]),[]));',
-        //'console.log(code.toString())'
+        "\n/*-*/",
     )
+    return 0;
 }
+
+console.error("Не указан входной файл")
+return -1;
+
 //console.log(JSON.stringify(encodeRLE([1, 2, 3, 3, 3, 3, 4, 5])))
 //-------------------------------
 // RLE1 format: 
@@ -101,3 +117,4 @@ function encodeRLE2(arr) {
 function decoder2(res, val) {
     return res.concat(typeof (val) === "object" ? Array(val[0]).fill(val[1]) : [val])
 }
+

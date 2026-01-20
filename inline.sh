@@ -1,15 +1,50 @@
 #!/usr/bin/env sh
 
 . ./build.env || exit 1
+#!/usr/bin/env bash
+
+. ./build.env || exit 1
+
+OP="Uint8"
+if test ! -z "$1"; then
+    OP="$1"
+fi
+
+echo "$OP"
+
+case "$OP" in
+"Uint8")
+    OUT_HTML="$BUILD"/app_A.html
+    node tools/stringify.js "$BUILD"/app.wasm >"$BUILD"/main0.js || exit 1
+    ;;
+"GZipArray")
+    OUT_HTML="$BUILD"/app_G.html
+    node tools/stringify.js "$BUILD"/app.wasm.gz >"$BUILD"/main0.js || exit 1
+    >"$BUILD"/main.js
+    ;;
+"Base64")
+    OUT_HTML="$BUILD"/app_B.html
+    node tools/stringify.js "$BUILD"/app.wasm.base64 >"$BUILD"/main0.js || exit 1
+    >"$BUILD"/main.js
+    ;;
+*)
+    echo "??? $OP"
+    exit 1
+    ;;
+esac
 
 # приписываем wasm к js:
-#node tools/stringify.js "$BUILD"/app.wasm > "$BUILD"/main.js  || exit 1
-node tools/stringify.js "$BUILD"/app.wasm.gz > "$BUILD"/main.js  || exit 1
-tail -n+2 "$SRC"/app_tpl.js >> "$BUILD"/main.js  || exit 1
+head -n 1 "$BUILD"/main0.js >"$BUILD"/main.js || exit 1
+tail -n+2 "$SRC"/app_tpl.js >>"$BUILD"/main.js || exit 1
+tail -n 1 "$BUILD"/main0.js >>"$BUILD"/main.js || exit 1
+rm "$BUILD"/main0.js
+
 # минимизируем js:
-npx uglifyjs --rename "$BUILD"/main.js > "$BUILD"/main.u.js  || exit 1
-npx regpack --es6 0 --reassignVars 0 "$BUILD"/main.u.js | tail -n+2 > "$BUILD"/main.s.js || exit 1
+npx uglifyjs --rename "$BUILD"/main.js  > "$BUILD"/main.u.js  || exit 1
+npx regpack --reassignVars 0 "$BUILD"/main.u.js | sed -e 's/^stats:.*$//g' > "$BUILD"/main.s.js || exit 1
+
 # встраиваем js в html:
-node tools/inline.js "$SRC"/html_tpl.html "$BUILD" > "$BUILD"/app.html  || exit 1
-#sed -i -e 's/<script/<script type=module/' "$BUILD"/app.html
+echo "$OUT_HTML"
+node tools/inline.js "$SRC"/html_tpl.html "$BUILD" | tr -d '\r' | tr -d '\n' > "$OUT_HTML" || exit 1
+
 echo OK
