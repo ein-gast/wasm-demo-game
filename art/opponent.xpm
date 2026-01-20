@@ -1,0 +1,25 @@
+/* XPM */
+static const char *opponent[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 3 1 ",
+"  c #EF2522",
+". c #B36E2F",
+"X c None",
+/* pixels */
+"XXXXXXXXXXXXXXXX",
+"XXXXXXX  XXXXXXX",
+"XXXX XX  XX XXXX",
+"X X XXX..XXX X X",
+"X XXXXX..XXXXX X",
+"X XXXXX..XXXXX.X",
+"X...XX .. XX...X",
+"X.X.XX....XX.X.X",
+"X.X.  ....  .X.X",
+"X.X..........X.X",
+"X.XXXX....XXXX.X",
+"X.XXXX....XXXX.X",
+"X.XXXX....XXXX.X",
+"X..XXXXXXXXXX..X",
+"XXX.XXXXXXXX.XXX",
+"XXXXXXXXXXXXXXXX"
+};

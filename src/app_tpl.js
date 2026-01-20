@@ -1,7 +1,7 @@
 const Z = new Uint8Array([0, 0, 0]);
-let _C, _T, S = 150, BS = S * S * 4
 WebAssembly.instantiate(Z)
     .then(({ instance }) => {
+        let _C, _T, S = 150, BS = S * S * 4
         instance.exports.memory.grow(Math.ceil(1 + BS / 16 / 1024))
         console.log(instance.exports)
         const pixPtr = instance.exports.__heap_base.value; // __heap_base .. __heap_end

@@ -3,6 +3,8 @@
 #include "app_light.h"
 #include "app_pixdata.h"
 #include "app_statelogic.h"
+#define _COMPILE_COLLISION_
+#include "app_colision.h"
 #define _COMPILE_WALLS_
 #include "app_walls.h"
 #define _COMPILE_RND_
@@ -13,6 +15,11 @@ void putPix(byte *canvas, int bpp, int toX, int toY, const byte pal[256][4],
 void putProj(byte *canvas, int bpp, int toX, int toY);
 void putWall(byte *canvas, int bpp, const walSect *wal);
 void putFontNumber(byte *canvas, int bpp, int toX, int toY, int number);
+
+byte sum255(byte a, byte b) {
+  int sum = a + b;
+  return sum > 255 ? 255 : sum;
+}
 
 void init(int w, int h) {
   state.vpW = state.winW = w;
@@ -30,20 +37,35 @@ void init(int w, int h) {
   state.vpY = h;
   state.plX = w / 2;
   state.plY = state.vpY - h + PIXSZ * 1.5;
+  state.gameover = false;
+  state.score = 0;
+  state.timer = -1;
   //
   unpakPal(pixFont3x5);
   unpakPal(pixShp16x16);
   unpakPal(pixRing16x16);
+  unpakPal(pixOppo16x16);
   level0(state.obj, state.vpW);
 }
 
-void input(int code1, int code2) { state.plXDir = -state.plXDir; }
+void input(int code1, int code2) {
+  if (state.gameover && state.timer == 0) {
+    init(state.winW, state.winH);
+  }
+  state.plXDir = -state.plXDir;
+}
 
 void process(int t) {
   static unsigned int procFrame = 0;
+  // timer
+  if (state.gameover && state.timer > 0) {
+    state.timer--;
+  }
   // viewport
   state.vpY++;
   // state.vpY=100;
+
+  colReset();
 
   // walls
   const walSect *ws;
@@ -56,6 +78,7 @@ void process(int t) {
       ws = walFirst();
       continue;
     }
+    colWalAdd(ws, 1);
     ws = walNext(ws);
   }
   if (lastY < state.vpY) {
@@ -66,29 +89,40 @@ void process(int t) {
   }
 
   // player
-  switch (state.plXDir) {
-  case +1:
-    if (state.plX < state.vpW - PIXSZ2) {
-      state.plX++;
+  if (!state.gameover) {
+    switch (state.plXDir) {
+    case +1:
+      if (state.plX < state.vpW - PIXSZ2) {
+        state.plX++;
+      }
+      break;
+    case -1:
+      if (state.plX > PIXSZ2) {
+        state.plX--;
+      }
+      break;
     }
-    break;
-  case -1:
-    if (state.plX > PIXSZ2) {
-      state.plX--;
+    state.plY++;
+
+    o_player();
+
+    if (procFrame % 10 == 0) {
+      objState s = {.type = OTYPE_BNORM, .x = state.plX, .y = state.plY};
+      place(state.projctl, PROJCNT, s);
     }
-    break;
   }
-  state.plY++;
 
   // objects
   for (int i = 0; i < OBJCNT; i++) {
     switch (state.obj[i].type) {
     case OTYPE_ERING:
       o_ering(i);
+      colObjAdd(state.obj + i, i);
       break;
-    case OTYPE_EBOX:
-      o_ebox(i);
-      break;
+      // case OTYPE_EBOX:
+      //   o_ebox(i);
+      //   colWalAdd(ws, 1);
+      //   break;
     }
   }
 
@@ -98,15 +132,10 @@ void process(int t) {
     case OTYPE_BNORM:
       o_prjctl_norm(i);
       break;
-    case OTYPE_BPOWER:
-      o_prjctl_pwr(i);
-      break;
+      // case OTYPE_BPOWER:
+      //   o_prjctl_pwr(i);
+      //   break;
     }
-  }
-
-  if (procFrame % 10 == 0) {
-    objState s = {.type = OTYPE_BNORM, .x = state.plX, .y = state.plY};
-    place(state.projctl, PROJCNT, s);
   }
 
   procFrame++;
@@ -128,16 +157,20 @@ int render(int t, byte *input) {
   }
 
   // clear
-  int i = 0, cnt = state.vpW * state.vpH;
+  int i = 0; //, cnt = state.vpW * state.vpH;
   col3 l = {10, 10, 10};
+  if (state.gameover) {
+    l.r = 120;
+  }
+
   for (int y = 0; y < state.vpH; y++) {
     for (int x = 0; x < state.vpW; x++) {
-      i = x + y * state.vpW;
-      l = litVal(x, state.vpY - y);
-      input[i * bytePerPixel + 0] = l.r;
-      input[i * bytePerPixel + 1] = l.g;
-      input[i * bytePerPixel + 2] = l.b;
-      input[i * bytePerPixel + 3] = 255;
+      i = (x + y * state.vpW) * bytePerPixel;
+      // l = litVal(x, state.vpY - y);
+      input[i + 0] = l.r;
+      input[i + 1] = l.g;
+      input[i + 2] = l.b;
+      input[i + 3] = 255;
     }
   }
 
@@ -154,18 +187,30 @@ int render(int t, byte *input) {
     ws = walNext(ws);
   }
 
-  // player
-  int px = state.plX;
-  int py = state.vpY - state.plY;
+  // apply light+shade
+  for (int y = 0; y < state.vpH; y++) {
+    for (int x = 0; x < state.vpW; x++) {
+      i = (x + y * state.vpW) * bytePerPixel;
+      l = litVal(x, state.vpY - y);
+      input[i + 0] = sum255(l.r, input[i + 0]);
+      input[i + 1] = sum255(l.g, input[i + 1]);
+      input[i + 2] = sum255(l.b, input[i + 2]);
+    }
+  }
 
-  putPix(input, bytePerPixel, px, py, pixShp16x16.pal, pixShp16x16.pix);
+  // player
+  if (!state.gameover) {
+    int px = state.plX;
+    int py = state.vpY - state.plY;
+    putPix(input, bytePerPixel, px, py, pixShp16x16.pal, pixShp16x16.pix);
+  }
 
   // objects
   for (int i = 0; i < OBJCNT; i++) {
     switch (state.obj[i].type) {
     case OTYPE_ERING:
       putPix(input, bytePerPixel, state.obj[i].x, state.vpY - state.obj[i].y,
-             pixRing16x16.pal, pixRing16x16.pix);
+             pixOppo16x16.pal, pixOppo16x16.pix);
       break;
     case OTYPE_EBOX:
       break;
@@ -182,7 +227,7 @@ int render(int t, byte *input) {
     }
   }
 
-  putFontNumber(input, bytePerPixel, state.vpW-10, 5, state.vpY);
+  putFontNumber(input, bytePerPixel, state.vpW - 10, 5, state.score);
 
   frame++;
   return state.vpY;
@@ -265,7 +310,7 @@ void putFontNumber(byte *canvas, int bpp, int toX, int toY, int number) {
   auto pix = pixFont3x5.pix;
   int ofs, digitX, rangeX = 0;
 
-  while (number > 0) {
+  do {
     digitX = (number % 10) * 3;
 
     for (int py = 0; py < 5; py++) {
@@ -288,5 +333,5 @@ void putFontNumber(byte *canvas, int bpp, int toX, int toY, int number) {
 
     number = number / 10;
     rangeX += 3 + 1;
-  }
+  } while (number > 0);
 }
