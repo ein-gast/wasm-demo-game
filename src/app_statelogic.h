@@ -3,10 +3,8 @@
 #include <stdbool.h>
 
 struct {
-  // screen=window size
-  int winW, winH;
-  // viewport
-  int vpY, vpW, vpH;
+  // viewport size and pos
+  int vpY, vpS;
   // player
   int plY, plX, plXDir;
   // powerups
@@ -42,14 +40,14 @@ void o_player() {
 }
 
 void o_ering(int i) {
-  if (state.obj[i].y < state.vpY - state.winH - PIXSZ) {
+  if (state.obj[i].y < state.vpY - state.vpS - PIXSZ) {
     state.obj[i].type = OTYPE_NONE;
     return;
   }
 }
 
 void o_ebox(int i) {
-  if (state.obj[i].y < state.vpY - state.winH - PIXSZ) {
+  if (state.obj[i].y < state.vpY - state.vpS - PIXSZ) {
     state.obj[i].type = OTYPE_NONE;
     return;
   }

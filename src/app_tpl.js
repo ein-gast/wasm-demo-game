@@ -6,10 +6,10 @@ WebAssembly.instantiate(Z, {
         }
     }
 })
-    .then(({ instance:inst }) => {
+    .then(({ instance: inst }) => {
         //console.log(instance.exports.app_js.value, instance.exports.memory.buffer)
-        let str = '', mem = new Uint8Array(inst.exports.memory.buffer)
-        for (let i = inst.exports.app_js.value; mem[i] !== 0; i++) {
+        let i = inst.exports.app_js.value, str = '', mem = new Uint8Array(inst.exports.memory.buffer)
+        for (; mem[i] !== 0; i++) {
             str += String.fromCharCode(mem[i])
         }
         eval(str)

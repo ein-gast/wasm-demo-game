@@ -54,6 +54,7 @@ struct {
 "XXX.XXXXXXXX.XXX",
 "XXXXXXXXXXXXXXXX"}};
 
+/*
 struct {
   byte pal[256][4];
   const int mapSize;
@@ -71,6 +72,7 @@ struct {
             "  XXXXXXXXXXXX  ", "  XXXXXXXXXXXX  ", "X  XXXXXXXXXX  X",
             "X   XXXXXXXX   X", "XX    XXXX    XX", "XXXX        XXXX",
             "XXXXXX    XXXXXX"}};
+*/
 
 struct {
   byte pal[256][4];

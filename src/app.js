@@ -8,7 +8,7 @@ const image = (_T = (_C = document.getElementById("c"))
     .getImageData(0, 0, S, _C.width = _C.height = S);
 _C.style = "width:min(90vw,90vh);height:min(90vw,90vh);image-rendering:pixelated;"
 // ---
-_E.init(S, S)
+_E.init(S)
 // обработка физики
 setInterval(() => { _E.process(0) }, 1000 / 60);
 // ввод
