@@ -1,9 +1,6 @@
 #!/usr/bin/env sh
 
 . ./build.env || exit 1
-#!/usr/bin/env bash
-
-. ./build.env || exit 1
 
 OP="Uint8"
 if test ! -z "$1"; then
@@ -11,6 +8,8 @@ if test ! -z "$1"; then
 fi
 
 echo "$OP"
+
+./compile.sh APP_MIN
 
 case "$OP" in
 "Uint8")

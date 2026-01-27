@@ -1,3 +1,5 @@
 /node_modules
 /REF.txt
 /_*
+/compile12.sh
+/src/app.min.js

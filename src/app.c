@@ -16,6 +16,19 @@ void putProj(byte *canvas, int bpp, int toX, int toY);
 void putWall(byte *canvas, int bpp, const walSect *wal);
 void putFontNumber(byte *canvas, int bpp, int toX, int toY, int number);
 
+// будет помещено в таблицу ипорта из-за -Wl,--inport-undefiled
+/* extern */ void extLog(int ptr);
+
+const char app_js[] =
+{
+#ifdef APP_MIN_JS
+#embed "app.min.js"
+#else
+#embed "app.js"
+#endif
+,'\0' // null terminator
+};
+
 byte sum255(byte a, byte b) {
   int sum = a + b;
   return sum > 255 ? 255 : sum;
@@ -142,6 +155,7 @@ void process(int t) {
   }
 
   procFrame++;
+  //extLog(procFrame);
 }
 
 int render(int t, byte *input) {
