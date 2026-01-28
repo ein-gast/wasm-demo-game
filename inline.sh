@@ -40,7 +40,7 @@ rm "$BUILD"/main0.js
 
 # минимизируем js:
 npx uglifyjs --rename "$BUILD"/main.js  > "$BUILD"/main.u.js  || exit 1
-npx regpack --reassignVars 0 "$BUILD"/main.u.js | sed -e 's/^stats:.*$//g' > "$BUILD"/main.s.js || exit 1
+npx regpack --reassignVars 0 "$BUILD"/main.u.js | sed -e 's/^stats:.*$//g' > "$BUILD"/main.z.js || exit 1
 
 # встраиваем js в html:
 echo "$OUT_HTML"

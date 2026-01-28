@@ -36,23 +36,12 @@ struct {
          {' ', 0xEF, 0x25, 0x22, 0xFF},
          {'.', 0xB3, 0x6E, 0x2F, 0xFF},
          {'X', 0, 0, 0, 0}},
-    .pix = {
-"XXXXXXXXXXXXXXXX",
-"XXXXXXX  XXXXXXX",
-"XXXX XX  XX XXXX",
-"X X XXX..XXX X X",
-"X XXXXX..XXXXX X",
-"X XXXXX..XXXXX.X",
-"X...XX .. XX...X",
-"X.X.XX....XX.X.X",
-"X.X.  ....  .X.X",
-"X.X..........X.X",
-"X.XXXX....XXXX.X",
-"X.XXXX....XXXX.X",
-"X.XXXX....XXXX.X",
-"X..XXXXXXXXXX..X",
-"XXX.XXXXXXXX.XXX",
-"XXXXXXXXXXXXXXXX"}};
+    .pix = {"XXXXXXXXXXXXXXXX", "XXXXXXX  XXXXXXX", "XXXX XX  XX XXXX",
+            "X X XXX..XXX X X", "X XXXXX..XXXXX X", "X XXXXX..XXXXX.X",
+            "X...XX .. XX...X", "X.X.XX....XX.X.X", "X.X.  ....  .X.X",
+            "X.X..........X.X", "X.XXXX....XXXX.X", "X.XXXX....XXXX.X",
+            "X.XXXX....XXXX.X", "X..XXXXXXXXXX..X", "XXX.XXXXXXXX.XXX",
+            "XXXXXXXXXXXXXXXX"}};
 
 /*
 struct {
@@ -74,6 +63,7 @@ struct {
             "XXXXXX    XXXXXX"}};
 */
 
+
 struct {
   byte pal[256][4];
   const int mapSize;
@@ -88,6 +78,24 @@ struct {
     .pix = {"...X.........X................", ".X.XX.XX.XX..X..XX.XXXX..X..X.",
             ".X.XX....X...........X.X......", ".X.XX..XXXX.XX.XX..X..XX.X.XX.",
             "...XX.......XX........XX......"}};
+
+
+/*
+struct {
+  byte pal[256][4];
+  const int mapSize;
+  const byte palMap[2][5];
+  const byte pix[50][3+1];
+} pixVFont3x5 = {
+    .mapSize = 2,
+    .palMap = {{' ', 0xFF, 0xFF, 0xFF, 0xFF}, {'X', 0, 0, 0, 0x00}},
+    .pix = {"XXX", "X X", "X X", "X X", "XXX", " XX", "  X", "  X", "  X",
+            "  X", "XXX", "  X", "XXX", "X  ", "XXX", "XXX", "  X", " XX",
+            "  X", "XXX", "X X", "X X", "XXX", "  X", "  X", "XXX", "X  ",
+            "XXX", "  X", "XXX", "XXX", "X  ", "XXX", "X X", "XXX", "XXX",
+            "  X", " X ", "X  ", "X  ", "XXX", "X X", "XXX", "X X", "XXX",
+            "XXX", "X X", "XXX", "  X", "XXX"}};
+*/
 
 // распаковывает палитру изображения
 void unpakPalArray(int mapSize, const byte palMap[][5],

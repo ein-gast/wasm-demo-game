@@ -13,11 +13,11 @@ _E.init(S)
 setInterval(() => { _E.process(0) }, 1000 / 60);
 // ввод
 _C.onmousedown = document.onkeydown = () => {
-    inst.exports.input(0, 0)
+    _E.input(0, 0)
 }
 // рендер
 const processFrame = (t) => {
-    inst.exports.render(t, pixPtr)
+    _E.render(t, pixPtr)
     // const ret = _E.render(t, pixPtr)
     // console.log(ret)
     image.data.set(pixBuf)
