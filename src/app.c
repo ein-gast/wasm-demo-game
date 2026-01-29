@@ -238,7 +238,7 @@ void putImageData(byte *input) {
   if (!state.gameover) {
     int px = state.plX;
     int py = state.vpY - state.plY;
-    putBitmap(input, px, py, false, pixShp16x16.pix);
+    putBitmap(input, px, py, true, pixShp16x16.pix);
   }
 
   // objects

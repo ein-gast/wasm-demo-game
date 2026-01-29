@@ -11,7 +11,7 @@ struct {
   // pal256 pal;
   const int mapSize;
   const byte palMap[3][5];
-  const byte pix[PIXSZ][PIXSZ2 + 1];
+  const byte pix[PIXSZ2][PIXSZ2 + 1];
 } pixShp16x16 = {.mapSize = 3,
                  .palMap =
                      {// code -> r,g,b,a
@@ -19,22 +19,14 @@ struct {
                       {'.', 0xFF, 0xFF, 0xFF, 0xFF},
                       {'A', 0, 0, 0, 0}},
                  .pix = {
-                 "AAAAAAAA", 
-                 "AAAAAAAA", 
-                 "AAAAAAAA", 
-                 "AAAAAAAA",
-                 "AAAAAAAA", 
-                 "AAAAAAAA", 
-                 "AAAAAAAA", 
-                 "AA.AAAA ",
-                 "AA..AAA ", 
-                 "AA. AA  ", 
-                 "AA..AA  ", 
-                 "AA. A   ",
-                 "AA..A   ", 
-                 "AA.    A", 
-                 "AA.AAAAA", 
-                 "AAAAAAAA"
+                    "AAAAAAAA",
+                    "A.AAAAA ",
+                    "A..AAAA ",
+                    "A. AAA  ",
+                    "A..AAA  ",
+                    "A. AA   ",
+                    "A..AA   ",
+                    "A.     .",
                  }};
 
 struct {
