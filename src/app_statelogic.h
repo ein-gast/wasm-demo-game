@@ -8,12 +8,14 @@ struct {
   // player
   int plY, plX, plXDir;
   // powerups
-  int ammo, shield;
-  // game over flag
-  bool gameover;
+  //int ammo, shield;
+
   int timer;
   // score
   int score;
+  
+  // game over flag
+  bool gameover;
 
   // scene objects
   objState obj[OBJCNT];

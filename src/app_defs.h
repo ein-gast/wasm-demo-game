@@ -15,6 +15,8 @@ const byte OTYPE_NONE = 0, //
 // размер растра
 #define PIXSZ (16)
 #define PIXSZ2 (PIXSZ / 2)
+// сколько байт в пикселе пиксбуфера
+#define BPP (4)
 
 // очки
 #define SCORE_DISTANCE 1
@@ -22,7 +24,7 @@ const byte OTYPE_NONE = 0, //
 
 //
 typedef struct {
-  byte type;
+  int type;
   int x, y;
   // int light_val;
 } objState;

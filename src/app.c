@@ -12,11 +12,10 @@
 #define _COMPILE_RND_
 #include "app_rnd.h"
 
-void putPix(byte *canvas, int bpp, int toX, int toY,
-            const byte pix[PIXSZ][PIXSZ2 + 1]);
-void putProj(byte *canvas, int bpp, int toX, int toY);
-void putWall(byte *canvas, int bpp, const walSect *wal, col3 clearColor);
-void putFontNumber(byte *canvas, int bpp, int toX, int toY, int number);
+void putPix(byte *canvas, int toX, int toY, const byte pix[][PIXSZ2 + 1]);
+void putProj(byte *canvas, int toX, int toY);
+void putWall(byte *canvas, const walSect *wal, col3 clearColor);
+void putFontNumber(byte *canvas, int toX, int toY, int number);
 
 // будет помещено в таблицу ипорта из-за -Wl,--inport-undefiled
 // /* extern */ void extLog(int ptr);
@@ -43,8 +42,9 @@ void init(int vpSize) {
   for (int i = 0; i < PROJCNT; i++) {
     state.projctl[i].type = OTYPE_NONE;
   }
-  state.ammo = 0;
-  state.shield = 0;
+
+  //state.ammo = 0;
+  //state.shield = 0;
   state.plXDir = +1;
   // state.plXDir = 0;
   state.vpY = vpSize;
@@ -177,7 +177,6 @@ void process() {
 
 void putImageData(byte *input) {
   static unsigned int frame = 0;
-  const int bytePerPixel = 4;
 
 #ifdef WITH_LIGHT
   // setup lights
@@ -200,7 +199,7 @@ void putImageData(byte *input) {
   // clear
   for (int y = 0; y < state.vpS; y++) {
     for (int x = 0; x < state.vpS; x++) {
-      i = (x + y * state.vpS) * bytePerPixel;
+      i = (x + y * state.vpS) * BPP;
       input[i + 0] = clearColor.r;
       input[i + 1] = clearColor.g;
       input[i + 2] = clearColor.b;
@@ -217,7 +216,7 @@ void putImageData(byte *input) {
       break;
     }
     sum++;
-    putWall(input, bytePerPixel, ws, clearColor);
+    putWall(input, ws, clearColor);
     ws = walNext(ws);
   }
 
@@ -225,7 +224,7 @@ void putImageData(byte *input) {
   // apply light+shade
   for (int y = 0; y < state.vpS; y++) {
     for (int x = 0; x < state.vpS; x++) {
-      i = (x + y * state.vpS) * bytePerPixel;
+      i = (x + y * state.vpS) * BPP;
       clearColor = litVal(x, state.vpY - y); // var reuse
       input[i + 0] = sum255(clearColor.r, input[i + 0]);
       input[i + 1] = sum255(clearColor.g, input[i + 1]);
@@ -238,14 +237,14 @@ void putImageData(byte *input) {
   if (!state.gameover) {
     int px = state.plX;
     int py = state.vpY - state.plY;
-    putPix(input, bytePerPixel, px, py, pixShp16x16.pix);
+    putPix(input, px, py, pixShp16x16.pix);
   }
 
   // objects
   for (int i = 0; i < OBJCNT; i++) {
     switch (state.obj[i].type) {
     case OTYPE_ERING:
-      putPix(input, bytePerPixel, state.obj[i].x, state.vpY - state.obj[i].y,
+      putPix(input, state.obj[i].x, state.vpY - state.obj[i].y,
              pixOppo16x16.pix);
       break;
       // case OTYPE_EBOX:
@@ -255,7 +254,7 @@ void putImageData(byte *input) {
   for (int i = 0; i < PROJCNT; i++) {
     switch (state.projctl[i].type) {
     case OTYPE_BNORM:
-      putProj(input, bytePerPixel, state.projctl[i].x,
+      putProj(input, state.projctl[i].x,
               state.vpY - state.projctl[i].y);
       break;
       // case OTYPE_BPOWER:
@@ -263,13 +262,13 @@ void putImageData(byte *input) {
     }
   }
 
-  putFontNumber(input, bytePerPixel, state.vpS - 10, 5, state.score);
+  putFontNumber(input, state.vpS - 10, 5, state.score);
 
   frame++;
 }
 
-void putPix(byte *canvas, int bpp, int toX, int toY,
-            const byte pix[PIXSZ][PIXSZ2 + 1]) {
+void putPix(byte *canvas,int toX, int toY,
+            const byte pix[][PIXSZ2 + 1]) {
   int ofs, fx;
   // col4 col;
   toX -= PIXSZ2;
@@ -287,7 +286,7 @@ void putPix(byte *canvas, int bpp, int toX, int toY,
         continue;
       }
       ofs = toX + px + (toY + py) * state.vpS;
-      ofs *= bpp;
+      ofs *= BPP;
       canvas[ofs + 0] = globalPal[pix[py][fx]][0];
       canvas[ofs + 1] = globalPal[pix[py][fx]][1];
       canvas[ofs + 2] = globalPal[pix[py][fx]][2];
@@ -296,7 +295,7 @@ void putPix(byte *canvas, int bpp, int toX, int toY,
   }
 }
 
-void putFontNumber(byte *canvas, int bpp, int toX, int toY, int number) {
+void putFontNumber(byte *canvas, int toX, int toY, int number) {
   // auto pal = pixFont3x5.pal;
   auto pix = pixFont3x5.pix;
   int ofs, digitX, rangeX = 0;
@@ -316,7 +315,7 @@ void putFontNumber(byte *canvas, int bpp, int toX, int toY, int number) {
           continue;
         }
         ofs = toX - rangeX + px + (toY + py) * state.vpS;
-        ofs *= bpp;
+        ofs *= BPP;
         canvas[ofs + 0] = globalPal[pix[py][digitX + px]][0];
         canvas[ofs + 1] = globalPal[pix[py][digitX + px]][1];
         canvas[ofs + 2] = globalPal[pix[py][digitX + px]][2];
@@ -328,61 +327,27 @@ void putFontNumber(byte *canvas, int bpp, int toX, int toY, int number) {
   } while (number > 0);
 }
 
-/*
-void putFontNumber(byte *canvas, int bpp, int toX, int toY, int number) {
-  auto pal = pixVFont3x5.pal;
-  auto pix = pixVFont3x5.pix;
-  int ofs, digitX, rangeX = 0;
-
-  do {
-    digitX = (number % 10) * 3;
-
-    for (int py = 0; py < 5; py++) {
-      if (toY + py < 0 || toY + py >= state.vpS) {
-        continue;
-      }
-      for (int px = 0; px < 3; px++) {
-        if (toX + px < 0 || toX + px >= state.vpS) {
-          continue;
-        }
-        if (!pal[pix[py][digitX + px]][3]) {
-          continue;
-        }
-        ofs = toX - rangeX + px + (toY + py) * state.vpS;
-        ofs *= bpp;
-        canvas[ofs + 0] = pal[pix[digitX + py][px]][0];
-        canvas[ofs + 1] = pal[pix[digitX + py][px]][1];
-        canvas[ofs + 2] = pal[pix[digitX + py][px]][2];
-      }
-    }
-
-    number = number / 10;
-    rangeX += 3 + 1;
-  } while (number > 0);
-}
-*/
-
-void putProj(byte *canvas, int bpp, int toVpX, int toVpY) {
+void putProj(byte *canvas, int toVpX, int toVpY) {
   int x1 = toVpX - PIXSZ2 + 2, y1 = toVpY;
   int x2 = toVpX + PIXSZ2 - 2, y2 = toVpY;
   int ofs;
   if (x1 >= 0 && x1 < state.vpS && y1 >= 0 && y1 < state.vpS) {
     ofs = x1 + y1 * state.vpS;
-    ofs *= bpp;
+    ofs *= BPP;
     canvas[ofs + 0] = 0;
     canvas[ofs + 1] = 255;
     canvas[ofs + 2] = 0;
   }
   if (x2 >= 0 && x2 < state.vpS && y2 >= 0 && y2 < state.vpS) {
     ofs = x2 + y2 * state.vpS;
-    ofs *= bpp;
+    ofs *= BPP;
     canvas[ofs + 0] = 0;
     canvas[ofs + 1] = 255;
     canvas[ofs + 2] = 0;
   }
 }
 
-void putWall(byte *canvas, int bpp, const walSect *wal, col3 clearColor) {
+void putWall(byte *canvas, const walSect *wal, col3 clearColor) {
   int y1 = state.vpY - wal->y - wal->yDist;
   int y2 = y1 + wal->yDist;
   if ((y1 > state.vpS && y2 > state.vpS) || (y1 < 0 && y2 < 0)) {
@@ -397,7 +362,7 @@ void putWall(byte *canvas, int bpp, const walSect *wal, col3 clearColor) {
 
     for (x = 0; x < state.vpS; x++) {
       ofs = x + y * state.vpS;
-      ofs *= bpp;
+      ofs *= BPP;
       // canvas[ofs * bpp + 0] = 50;
       // canvas[ofs * bpp + 1] = 50;
       // canvas[ofs * bpp + 2] = 50;
