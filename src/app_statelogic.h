@@ -26,12 +26,13 @@ void do_gameover() {
 }
 
 void o_player() {
-  int col = collWithObj(state.plX, state.plY);
-  if (col >= 0) {
-    state.obj[col].type = OTYPE_NONE;
-    do_gameover();
-    return;
-  }
+  int col;
+  // col = collWithObj(state.plX, state.plY);
+  // if (col >= 0) {
+  //   state.obj[col].type = OTYPE_NONE;
+  //   do_gameover();
+  //   return;
+  // }
   col = collWithWall(state.plX, state.plY, PIXSZ, PIXSZ2);
   if (col >= 0) {
     do_gameover();
@@ -46,12 +47,12 @@ void o_ering(int i) {
   }
 }
 
-void o_ebox(int i) {
-  if (state.obj[i].y < state.vpY - state.vpS - PIXSZ) {
-    state.obj[i].type = OTYPE_NONE;
-    return;
-  }
-}
+// void o_ebox(int i) {
+//   if (state.obj[i].y < state.vpY - state.vpS - PIXSZ) {
+//     state.obj[i].type = OTYPE_NONE;
+//     return;
+//   }
+// }
 
 void o_prjctl_norm(int i) {
   for (int k = 0; k < 3; k++) {

@@ -10,7 +10,7 @@
 #define _COMPILE_RND_
 #include "app_rnd.h"
 
-void putPix(byte *canvas, int bpp, int toX, int toY, const byte pal[256][4],
+void putPix(byte *canvas, int bpp, int toX, int toY, const pal256 pal,
             const byte pix[PIXSZ][PIXSZ + 1]);
 void putProj(byte *canvas, int bpp, int toX, int toY);
 void putWall(byte *canvas, int bpp, const walSect *wal, col3 clearColor);
@@ -44,7 +44,7 @@ void init(int vpSize) {
   state.ammo = 0;
   state.shield = 0;
   state.plXDir = +1;
-  state.plXDir = +1;
+  // state.plXDir = 0;
   state.vpY = vpSize;
   state.plX = vpSize / 2;
   state.plY = state.vpY - vpSize + PIXSZ * 2 / 3;
@@ -94,10 +94,11 @@ void process(int t) {
     ws = walNext(ws);
   }
   if (lastY < state.vpY) {
-    // grow
-    walSect newSect;
-    createWal(&newSect, state.vpS, PIXSZ * 3);
-    pushWal(&newSect, true);
+    // grow up
+    createSection(state.obj, state.vpS);
+    // walSect newSect;
+    // createWal(&newSect, state.vpS, PIXSZ * 3);
+    // pushWal(&newSect, true);
   }
 
   // player
@@ -122,13 +123,22 @@ void process(int t) {
     o_player();
 
     if (procFrame % 10 == 0) {
-      objState s = {.type = OTYPE_BNORM, .x = state.plX, .y = state.plY};
-      place(state.projctl, PROJCNT, s);
+      objState *s;
+      if (nullptr != (s = placePtr(state.projctl, PROJCNT))) {
+        s->type = OTYPE_BNORM;
+        s->x = state.plX;
+        s->y = state.plY;
+      }
     }
   }
 
   // objects
   for (int i = 0; i < OBJCNT; i++) {
+    if (state.obj[i].type == OTYPE_ERING) {
+      o_ering(i);
+      colObjAdd(state.obj + i, i);
+    }
+    /*
     switch (state.obj[i].type) {
     case OTYPE_ERING:
       o_ering(i);
@@ -139,10 +149,15 @@ void process(int t) {
       //   colWalAdd(ws, 1);
       //   break;
     }
+    */
   }
 
   // projectiles
   for (int i = 0; i < PROJCNT; i++) {
+    if (state.projctl[i].type == OTYPE_BNORM) {
+      o_prjctl_norm(i);
+    }
+    /*
     switch (state.projctl[i].type) {
     case OTYPE_BNORM:
       o_prjctl_norm(i);
@@ -151,6 +166,7 @@ void process(int t) {
       //   o_prjctl_pwr(i);
       //   break;
     }
+    */
   }
 
   procFrame++;
@@ -248,7 +264,7 @@ int render(int t, byte *input) {
   return state.vpY;
 }
 
-void putPix(byte *canvas, int bpp, int toX, int toY, const byte pal[256][4],
+void putPix(byte *canvas, int bpp, int toX, int toY, const pal256 pal,
             const byte pix[PIXSZ][PIXSZ + 1]) {
   int ofs;
   toX -= PIXSZ2;
@@ -340,9 +356,9 @@ void putFontNumber(byte *canvas, int bpp, int toX, int toY, int number) {
 }
 */
 
-void putProj(byte *canvas, int bpp, int toX, int toY) {
-  int x1 = toX - PIXSZ2 + 2, y1 = toY;
-  int x2 = toX + PIXSZ2 - 2, y2 = toY;
+void putProj(byte *canvas, int bpp, int toVpX, int toVpY) {
+  int x1 = toVpX - PIXSZ2 + 2, y1 = toVpY;
+  int x2 = toVpX + PIXSZ2 - 2, y2 = toVpY;
   int ofs;
   if (x1 >= 0 && x1 < state.vpS && y1 >= 0 && y1 < state.vpS) {
     ofs = x1 + y1 * state.vpS;

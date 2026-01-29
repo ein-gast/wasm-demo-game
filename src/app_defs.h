@@ -3,8 +3,13 @@
 typedef unsigned char byte;
 
 // типы объектов
-const byte OTYPE_NONE = 0, OTYPE_ERING = 1, OTYPE_EBOX = 2, OTYPE_PWPN = 101,
-           OTYPE_PSHLD = 102, OTYPE_BNORM = 201, OTYPE_BPOWER = 202;
+const byte OTYPE_NONE = 0, //
+    OTYPE_ERING = 1,       // противник №1
+    OTYPE_EBOX = 2,        // противник №2
+    OTYPE_PWPN = 101,      // буст оружия
+    OTYPE_PSHLD = 102,     // буст защиты
+    OTYPE_BNORM = 201,     // снаряд нормальный
+    OTYPE_BPOWER = 202;    // снаряд усиленный
 
 // размер растра
 #define PIXSZ (16)
@@ -17,7 +22,11 @@ typedef struct {
   // int light_val;
 } objState;
 
-typedef struct {byte r, g, b;} col3;
+typedef struct {
+  byte r, g, b;
+} col3;
+
+typedef byte pal256[256][4];
 
 typedef struct {
   int x, y;
@@ -28,7 +37,7 @@ typedef struct {
 /*
                mXRigth
   xLeft   mxLeft  |    xRight
-      V      V    V     V 
+      V      V    V     V
   ----|      |----|     |----
 */
 typedef struct {
@@ -42,7 +51,7 @@ typedef struct {
 } walSect;
 
 // размеры пулов объектов
-#define OBJCNT (20) // противники и поверапы
-#define PROJCNT (20) // "выстрелы"
-#define LITCNT (20) // источники света
-#define WALCNT (20) // секции стен
+#define PROJCNT (20)         // "выстрелы"
+#define LITCNT (PROJCNT * 2) // источники света
+#define WALCNT (20)          // секции стен
+#define OBJCNT (WALCNT * 20) // противники и поверапы

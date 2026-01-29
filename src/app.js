@@ -10,9 +10,9 @@ _C.style = "width:min(90vw,90vh);height:min(90vw,90vh);image-rendering:pixelated
 // ---
 _E.init(S)
 // обработка физики
-setInterval(() => { _E.process(0) }, 1000 / 60);
+setInterval((_) => { _E.process(0) }, 1000 / 60);
 // ввод
-_C.onmousedown = document.onkeydown = () => {
+_C.onmousedown = document.onkeydown = (_) => {
     _E.input(0, 0)
 }
 // рендер

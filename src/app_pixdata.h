@@ -6,7 +6,7 @@
   }
 
 struct {
-  byte pal[256][4];
+  pal256 pal;
   const int mapSize;
   const byte palMap[3][5];
   const byte pix[PIXSZ][PIXSZ + 1];
@@ -25,7 +25,7 @@ struct {
             "XX.XXXXXXXXXX.XX"}};
 
 struct {
-  byte pal[256][4];
+  pal256 pal;
   const int mapSize;
   const byte palMap[3][5];
   const byte pix[PIXSZ][PIXSZ + 1];
@@ -65,7 +65,7 @@ struct {
 
 
 struct {
-  byte pal[256][4];
+  pal256 pal;
   const int mapSize;
   const byte palMap[2][5];
   const byte pix[5][30 + 1];
@@ -82,7 +82,7 @@ struct {
 
 /*
 struct {
-  byte pal[256][4];
+  pal256 pal;
   const int mapSize;
   const byte palMap[2][5];
   const byte pix[50][3+1];
@@ -99,7 +99,7 @@ struct {
 
 // распаковывает палитру изображения
 void unpakPalArray(int mapSize, const byte palMap[][5],
-                   unsigned char pal[256][4]) {
+                   pal256 pal) {
   for (int i = 0; i < mapSize; i++) {
     pal[palMap[i][0]][0] = palMap[i][1];
     pal[palMap[i][0]][1] = palMap[i][2];

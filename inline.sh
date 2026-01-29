@@ -19,12 +19,12 @@ case "$OP" in
 "GZipArray")
     OUT_HTML="$BUILD"/app_G.html
     node tools/stringify.js "$BUILD"/app.wasm.gz >"$BUILD"/main0.js || exit 1
-    >"$BUILD"/main.js
+    :>"$BUILD"/main.js
     ;;
 "Base64")
     OUT_HTML="$BUILD"/app_B.html
     node tools/stringify.js "$BUILD"/app.wasm.base64 >"$BUILD"/main0.js || exit 1
-    >"$BUILD"/main.js
+    :>"$BUILD"/main.js
     ;;
 *)
     echo "??? $OP"
@@ -39,7 +39,7 @@ tail -n 1 "$BUILD"/main0.js >>"$BUILD"/main.js || exit 1
 rm "$BUILD"/main0.js
 
 # минимизируем js:
-npx uglifyjs --rename "$BUILD"/main.js  > "$BUILD"/main.u.js  || exit 1
+npx uglifyjs --toplevel --keep-fargs --rename "$BUILD"/main.js  > "$BUILD"/main.u.js  || exit 1
 npx regpack --reassignVars 0 "$BUILD"/main.u.js | sed -e 's/^stats:.*$//g' > "$BUILD"/main.z.js || exit 1
 
 # встраиваем js в html:

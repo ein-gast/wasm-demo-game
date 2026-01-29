@@ -3,7 +3,7 @@
 #include <stdbool.h>
 
 void createWal(walSect *newSect, int levelWidth, int minspaceWidth);
-void pushWal(const walSect *newSect, bool recomputeY);
+int pushWal(const walSect *newSect, bool recomputeY);
 const walSect *walFirst();
 const walSect *walNext(const walSect *curr);
 void walReset();
@@ -36,11 +36,11 @@ void createWal(walSect *newSect, int levelWidth, int minspaceWidth) {
   }
 }
 
-void pushWal(const walSect *newSect, bool recomputeY) {
+int pushWal(const walSect *newSect, bool recomputeY) {
+  int newY = newSect->y;
   walls[walHead] = *newSect;
   walls[walHead].index = walHead;
   if (recomputeY) {
-    int newY = 0;
     if (!walIsEmpty()) {
       int oldHead = (WALCNT + walHead - 1) % WALCNT;
       newY = walls[oldHead].y + walls[oldHead].yDist;
@@ -48,6 +48,7 @@ void pushWal(const walSect *newSect, bool recomputeY) {
     walls[walHead].y = newY;
   }
   walHeadForward();
+  return newY;
 }
 
 const walSect *walFirst() {
