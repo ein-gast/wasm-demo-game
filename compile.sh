@@ -23,7 +23,7 @@ fi
 
 "$CLANG" --target="$WARCH" --language=c --std=c23 -Oz --no-standard-libraries \
     $CFLAGS \
-    -Wl,--export=init -Wl,--export=input -Wl,--export=process -Wl,--export=render -Wl,--export=__heap_base \
+    -Wl,--export=init -Wl,--export=input -Wl,--export=process -Wl,--export=putImageData -Wl,--export=__heap_base \
     -Wl,--export=app_js \
     -Wl,--import-undefined \
     -Wl,--strip-all \

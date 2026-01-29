@@ -12,14 +12,12 @@ _C.style = `width:${WH90};height:${WH90};image-rendering:pixelated`
 
 _E.init(S)
 // обработка физики
-setInterval((_) => { _E.process() }, 16 /*1000/60=16*/);
+setInterval((_) => _E.process(), 16 /*1000/60=16*/);
 // ввод
-_C.onmousedown = document.onkeydown = (_) => {
-    _E.input()
-}
+_C.onmousedown = document.onkeydown = (_) => _E.input()
 // рендер
 let processFrame = (_) => {
-    _E.render(pixPtr)
+    _E.putImageData(pixPtr)
     // const ret = _E.render(t, pixPtr)
     // console.log(ret)
     image.data.set(pixBuf)

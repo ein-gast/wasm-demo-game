@@ -175,7 +175,7 @@ void process() {
   // extLog(procFrame);
 }
 
-void render(byte *input) {
+void putImageData(byte *input) {
   static unsigned int frame = 0;
   const int bytePerPixel = 4;
 
