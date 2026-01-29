@@ -41,18 +41,23 @@ struct {
   // pal256 pal;
   const int mapSize;
   const byte palMap[3][5];
-  const byte pix[PIXSZ][PIXSZ2 + 1];
+  const byte pix[PIXSZ2][PIXSZ2 + 1];
 } pixOppo16x16 = {.mapSize = 3,
                   .palMap =
                       {// code -> r,g,b,a  #9F21C0
                        {'_', 0x9F, 0x21, 0xC0, 0xFF},
                        {'.', 0xFF, 0xFF, 0xFF, 0xFF},
                        {'A', 0, 0, 0, 0}},
-                  .pix = {"AAAAA___", "AAA_____", "AA_____.", "A______.",
-                          "A____...", "____.__.", "____.___", "__....__",
-                          "__....__", "____.___", "____.__.", "A____...",
-                          "A______.", "AA_____.", "AAA_____", "AAAAA___"}
-
+                  .pix = {
+                  "AAAAA___", 
+                  "AAA_____", 
+                  "AA_____.", 
+                  "A______.",
+                  "A____...", 
+                  "____.__.", 
+                  "____.___", 
+                  "__....__",
+                  }
 };
 
 /*

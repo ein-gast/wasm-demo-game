@@ -12,7 +12,8 @@
 #define _COMPILE_RND_
 #include "app_rnd.h"
 
-void putPix(byte *canvas, int toX, int toY, const byte pix[][PIXSZ2 + 1]);
+void putBitmap(byte *canvas, int toX, int toY, bool vMirror,
+               const byte pix[][PIXSZ2 + 1]);
 void putProj(byte *canvas, int toX, int toY);
 void putWall(byte *canvas, const walSect *wal, col3 clearColor);
 void putFontNumber(byte *canvas, int toX, int toY, int number);
@@ -43,8 +44,8 @@ void init(int vpSize) {
     state.projctl[i].type = OTYPE_NONE;
   }
 
-  //state.ammo = 0;
-  //state.shield = 0;
+  // state.ammo = 0;
+  // state.shield = 0;
   state.plXDir = +1;
   // state.plXDir = 0;
   state.vpY = vpSize;
@@ -237,15 +238,15 @@ void putImageData(byte *input) {
   if (!state.gameover) {
     int px = state.plX;
     int py = state.vpY - state.plY;
-    putPix(input, px, py, pixShp16x16.pix);
+    putBitmap(input, px, py, false, pixShp16x16.pix);
   }
 
   // objects
   for (int i = 0; i < OBJCNT; i++) {
     switch (state.obj[i].type) {
     case OTYPE_ERING:
-      putPix(input, state.obj[i].x, state.vpY - state.obj[i].y,
-             pixOppo16x16.pix);
+      putBitmap(input, state.obj[i].x, state.vpY - state.obj[i].y, true,
+                pixOppo16x16.pix);
       break;
       // case OTYPE_EBOX:
       //   break;
@@ -254,8 +255,7 @@ void putImageData(byte *input) {
   for (int i = 0; i < PROJCNT; i++) {
     switch (state.projctl[i].type) {
     case OTYPE_BNORM:
-      putProj(input, state.projctl[i].x,
-              state.vpY - state.projctl[i].y);
+      putProj(input, state.projctl[i].x, state.vpY - state.projctl[i].y);
       break;
       // case OTYPE_BPOWER:
       //   break;
@@ -267,9 +267,9 @@ void putImageData(byte *input) {
   frame++;
 }
 
-void putPix(byte *canvas,int toX, int toY,
-            const byte pix[][PIXSZ2 + 1]) {
-  int ofs, fx;
+void putBitmap(byte *canvas, int toX, int toY, bool vMirror,
+               const byte pix[][PIXSZ2 + 1]) {
+  int ofs, fx, fy;
   // col4 col;
   toX -= PIXSZ2;
   toY -= PIXSZ2;
@@ -277,19 +277,25 @@ void putPix(byte *canvas,int toX, int toY,
     if (toY + py < 0 || toY + py >= state.vpS) {
       continue;
     }
+    if (vMirror) {
+      fy = py < PIXSZ2 ? py : PIXSZ - py - 1;
+    } else {
+      fy = py;
+    }
     for (int px = 0; px < PIXSZ; px++) {
       if (toX + px < 0 || toX + px >= state.vpS) {
         continue;
       }
       fx = px < PIXSZ2 ? px : PIXSZ - px - 1;
-      if (!globalPal[pix[py][fx]][3]) {
+
+      if (!globalPal[pix[fy][fx]][3]) {
         continue;
       }
       ofs = toX + px + (toY + py) * state.vpS;
       ofs *= BPP;
-      canvas[ofs + 0] = globalPal[pix[py][fx]][0];
-      canvas[ofs + 1] = globalPal[pix[py][fx]][1];
-      canvas[ofs + 2] = globalPal[pix[py][fx]][2];
+      canvas[ofs + 0] = globalPal[pix[fy][fx]][0];
+      canvas[ofs + 1] = globalPal[pix[fy][fx]][1];
+      canvas[ofs + 2] = globalPal[pix[fy][fx]][2];
       // canvas[ofs*bpp+3] = globalPal[pix[py][px]][3];
     }
   }
