@@ -10,7 +10,7 @@
 #define _COMPILE_RND_
 #include "app_rnd.h"
 
-void putPix(byte *canvas, int bpp, int toX, int toY, const pal256 pal,
+void putPix(byte *canvas, int bpp, int toX, int toY,
             const byte pix[PIXSZ][PIXSZ + 1]);
 void putProj(byte *canvas, int bpp, int toX, int toY);
 void putWall(byte *canvas, int bpp, const walSect *wal, col3 clearColor);
@@ -104,7 +104,7 @@ void process(int t) {
   // player
   if (!state.gameover) {
     if (state.vpY % state.vpS == 0) {
-      state.score++;
+      state.score += SCORE_DISTANCE;
     }
     switch (state.plXDir) {
     case +1:
@@ -233,7 +233,7 @@ void render(int t, byte *input) {
   if (!state.gameover) {
     int px = state.plX;
     int py = state.vpY - state.plY;
-    putPix(input, bytePerPixel, px, py, pixShp16x16.pal, pixShp16x16.pix);
+    putPix(input, bytePerPixel, px, py, pixShp16x16.pix);
   }
 
   // objects
@@ -241,7 +241,7 @@ void render(int t, byte *input) {
     switch (state.obj[i].type) {
     case OTYPE_ERING:
       putPix(input, bytePerPixel, state.obj[i].x, state.vpY - state.obj[i].y,
-             pixOppo16x16.pal, pixOppo16x16.pix);
+             pixOppo16x16.pix);
       break;
       // case OTYPE_EBOX:
       //   break;
@@ -263,7 +263,7 @@ void render(int t, byte *input) {
   frame++;
 }
 
-void putPix(byte *canvas, int bpp, int toX, int toY, const pal256 pal,
+void putPix(byte *canvas, int bpp, int toX, int toY, 
             const byte pix[PIXSZ][PIXSZ + 1]) {
   int ofs;
   toX -= PIXSZ2;
@@ -276,21 +276,21 @@ void putPix(byte *canvas, int bpp, int toX, int toY, const pal256 pal,
       if (toX + px < 0 || toX + px >= state.vpS) {
         continue;
       }
-      if (!pal[pix[py][px]][3]) {
+      if (!globalPal[pix[py][px]][3]) {
         continue;
       }
       ofs = toX + px + (toY + py) * state.vpS;
       ofs *= bpp;
-      canvas[ofs + 0] = pal[pix[py][px]][0];
-      canvas[ofs + 1] = pal[pix[py][px]][1];
-      canvas[ofs + 2] = pal[pix[py][px]][2];
-      // canvas[ofs*bpp+3] = pal[pix[py][px]][3];
+      canvas[ofs + 0] = globalPal[pix[py][px]][0];
+      canvas[ofs + 1] = globalPal[pix[py][px]][1];
+      canvas[ofs + 2] = globalPal[pix[py][px]][2];
+      // canvas[ofs*bpp+3] = globalPal[pix[py][px]][3];
     }
   }
 }
 
 void putFontNumber(byte *canvas, int bpp, int toX, int toY, int number) {
-  auto pal = pixFont3x5.pal;
+  // auto pal = pixFont3x5.pal;
   auto pix = pixFont3x5.pix;
   int ofs, digitX, rangeX = 0;
 
@@ -305,14 +305,14 @@ void putFontNumber(byte *canvas, int bpp, int toX, int toY, int number) {
         if (toX + px < 0 || toX + px >= state.vpS) {
           continue;
         }
-        if (!pal[pix[py][digitX + px]][3]) {
+        if (!globalPal[pix[py][digitX + px]][3]) {
           continue;
         }
         ofs = toX - rangeX + px + (toY + py) * state.vpS;
         ofs *= bpp;
-        canvas[ofs + 0] = pal[pix[py][digitX + px]][0];
-        canvas[ofs + 1] = pal[pix[py][digitX + px]][1];
-        canvas[ofs + 2] = pal[pix[py][digitX + px]][2];
+        canvas[ofs + 0] = globalPal[pix[py][digitX + px]][0];
+        canvas[ofs + 1] = globalPal[pix[py][digitX + px]][1];
+        canvas[ofs + 2] = globalPal[pix[py][digitX + px]][2];
       }
     }
 

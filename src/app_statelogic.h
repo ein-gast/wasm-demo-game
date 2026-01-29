@@ -67,7 +67,7 @@ void o_prjctl_norm(int i) {
   if (col >= 0) {
     state.obj[col].type = OTYPE_NONE;
     state.projctl[i].type = OTYPE_NONE;
-    state.score += 5;
+    state.score += SCORE_ENEMY;
     return;
   }
 

@@ -5,15 +5,20 @@ typedef unsigned char byte;
 // типы объектов
 const byte OTYPE_NONE = 0, //
     OTYPE_ERING = 1,       // противник №1
-    OTYPE_EBOX = 2,        // противник №2
-    OTYPE_PWPN = 101,      // буст оружия
-    OTYPE_PSHLD = 102,     // буст защиты
-    OTYPE_BNORM = 201,     // снаряд нормальный
-    OTYPE_BPOWER = 202;    // снаряд усиленный
+    //OTYPE_EBOX = 2,        // противник №2
+    //OTYPE_PWPN = 101,      // буст оружия
+    //OTYPE_PSHLD = 102,     // буст защиты
+    OTYPE_BNORM = 201     // снаряд нормальный
+    //OTYPE_BPOWER = 202    // снаряд усиленный
+;
 
 // размер растра
 #define PIXSZ (16)
 #define PIXSZ2 (PIXSZ / 2)
+
+// очки
+#define SCORE_DISTANCE 1
+#define SCORE_ENEMY 50
 
 //
 typedef struct {
