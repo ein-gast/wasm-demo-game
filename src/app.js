@@ -1,10 +1,11 @@
 let _C, _T, S = 150, BS = S * S * 4, _E = inst.exports
-_E.memory.grow(Math.ceil(1 + BS / 16 / 1024))
+// Math.ceil(1 + BS / 16 / 1024) = 7
+_E.memory.grow(7 /*Math.ceil(1 + BS / 16 / 1024)*/)
 //console.log(inst.exports)
 const pixPtr = _E.__heap_base.value; // __heap_base .. __heap_end
 const pixBuf = new Uint8Array(mem = _E.memory.buffer).subarray(pixPtr, pixPtr + BS)
 const image = (_T = (_C = document.getElementById("c"))
-    .getContext("2d", { alpha: 0 }))
+    .getContext("2d"))
     .getImageData(0, 0, S, _C.width = _C.height = S);
 _C.style = "width:min(90vw,90vh);height:min(90vw,90vh);image-rendering:pixelated;"
 // ---

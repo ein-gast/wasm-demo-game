@@ -173,7 +173,7 @@ void process(int t) {
   // extLog(procFrame);
 }
 
-int render(int t, byte *input) {
+void render(int t, byte *input) {
   static unsigned int frame = 0;
   const int bytePerPixel = 4;
 
@@ -261,7 +261,6 @@ int render(int t, byte *input) {
   putFontNumber(input, bytePerPixel, state.vpS - 10, 5, state.score);
 
   frame++;
-  return state.vpY;
 }
 
 void putPix(byte *canvas, int bpp, int toX, int toY, const pal256 pal,
