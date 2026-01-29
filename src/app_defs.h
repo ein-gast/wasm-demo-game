@@ -31,6 +31,11 @@ typedef struct {
   byte r, g, b;
 } col3;
 
+typedef struct {
+  byte r, g, b, a;
+} col4;
+
+//typedef col4 pal256[256];
 typedef byte pal256[256][4];
 
 typedef struct {

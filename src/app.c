@@ -1,6 +1,8 @@
 #include "app_defs.h"
 #include "app_levels.h"
+#ifdef WITH_LIGHT
 #include "app_light.h"
+#endif
 #include "app_pixdata.h"
 #include "app_statelogic.h"
 #define _COMPILE_COLLISION_
@@ -11,13 +13,13 @@
 #include "app_rnd.h"
 
 void putPix(byte *canvas, int bpp, int toX, int toY,
-            const byte pix[PIXSZ][PIXSZ + 1]);
+            const byte pix[PIXSZ][PIXSZ2 + 1]);
 void putProj(byte *canvas, int bpp, int toX, int toY);
 void putWall(byte *canvas, int bpp, const walSect *wal, col3 clearColor);
 void putFontNumber(byte *canvas, int bpp, int toX, int toY, int number);
 
 // будет помещено в таблицу ипорта из-за -Wl,--inport-undefiled
-/* extern */ void extLog(int ptr);
+// /* extern */ void extLog(int ptr);
 
 const char app_js[] = {
 #ifdef APP_MIN_JS
@@ -60,14 +62,14 @@ void init(int vpSize) {
   level0(state.obj, state.vpS);
 }
 
-void input(int code1, int code2) {
+void input(/*int code1, int code2*/) {
   if (state.gameover && state.timer == 0) {
     init(state.vpS);
   }
   state.plXDir = -state.plXDir;
 }
 
-void process(int t) {
+void process() {
   static unsigned int procFrame = 0;
   // timer
   if (state.gameover && state.timer > 0) {
@@ -173,10 +175,11 @@ void process(int t) {
   // extLog(procFrame);
 }
 
-void render(int t, byte *input) {
+void render(byte *input) {
   static unsigned int frame = 0;
   const int bytePerPixel = 4;
 
+#ifdef WITH_LIGHT
   // setup lights
   litReset();
   for (int i = 0; i < PROJCNT; i++) {
@@ -187,7 +190,7 @@ void render(int t, byte *input) {
       break;
     }
   }
-
+#endif
   int i = 0; //, cnt = state.vpS * state.vpS;
   col3 clearColor = {10, 10, 10};
   if (state.gameover) {
@@ -218,6 +221,7 @@ void render(int t, byte *input) {
     ws = walNext(ws);
   }
 
+#ifdef WITH_LIGHT
   // apply light+shade
   for (int y = 0; y < state.vpS; y++) {
     for (int x = 0; x < state.vpS; x++) {
@@ -228,6 +232,7 @@ void render(int t, byte *input) {
       input[i + 2] = sum255(clearColor.b, input[i + 2]);
     }
   }
+#endif
 
   // player
   if (!state.gameover) {
@@ -263,9 +268,10 @@ void render(int t, byte *input) {
   frame++;
 }
 
-void putPix(byte *canvas, int bpp, int toX, int toY, 
-            const byte pix[PIXSZ][PIXSZ + 1]) {
-  int ofs;
+void putPix(byte *canvas, int bpp, int toX, int toY,
+            const byte pix[PIXSZ][PIXSZ2 + 1]) {
+  int ofs, fx;
+  // col4 col;
   toX -= PIXSZ2;
   toY -= PIXSZ2;
   for (int py = 0; py < PIXSZ; py++) {
@@ -276,14 +282,15 @@ void putPix(byte *canvas, int bpp, int toX, int toY,
       if (toX + px < 0 || toX + px >= state.vpS) {
         continue;
       }
-      if (!globalPal[pix[py][px]][3]) {
+      fx = px < PIXSZ2 ? px : PIXSZ - px - 1;
+      if (!globalPal[pix[py][fx]][3]) {
         continue;
       }
       ofs = toX + px + (toY + py) * state.vpS;
       ofs *= bpp;
-      canvas[ofs + 0] = globalPal[pix[py][px]][0];
-      canvas[ofs + 1] = globalPal[pix[py][px]][1];
-      canvas[ofs + 2] = globalPal[pix[py][px]][2];
+      canvas[ofs + 0] = globalPal[pix[py][fx]][0];
+      canvas[ofs + 1] = globalPal[pix[py][fx]][1];
+      canvas[ofs + 2] = globalPal[pix[py][fx]][2];
       // canvas[ofs*bpp+3] = globalPal[pix[py][px]][3];
     }
   }

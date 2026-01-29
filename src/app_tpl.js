@@ -1,9 +1,5 @@
 const Z = new Uint8Array([0, 0, 0]);
-WebAssembly.instantiate(Z, {
-    env: {
-        extLog: (n) => console.log(n)
-    }
-})
+WebAssembly.instantiate(Z)
     .then(({ instance: inst }) => {
         //console.log(instance.exports.app_js.value, instance.exports.memory.buffer)
         let i = inst.exports.app_js.value, S = '', m = new Uint8Array(inst.exports.memory.buffer)

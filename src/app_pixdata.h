@@ -8,54 +8,50 @@ pal256 globalPal;
   }
 
 struct {
-  //pal256 pal;
+  // pal256 pal;
   const int mapSize;
   const byte palMap[3][5];
-  const byte pix[PIXSZ][PIXSZ + 1];
-} pixShp16x16 = {
-    .mapSize = 3,
-    .palMap =
-        {// code -> r,g,b,a
-         {' ', 0x4B, 0x5B, 0xAB, 0xFF},
-         {'.', 0xFF, 0xFF, 0xFF, 0xFF},
-         {'X', 0, 0, 0, 0}},
-    .pix = {"XXXXXXXXXXXXXXXX", "XXXXXXXXXXXXXXXX", "XXXXXXXXXXXXXXXX",
-            "XXXXXXXXXXXXXXXX", "XXXXXXXXXXXXXXXX", "XXXXXXXXXXXXXXXX",
-            "XXXXXXXXXXXXXXXX", "XXXXXXXXXXXXXXXX", "XX.XXXX  XXXX.XX",
-            "XX..XXX  XXX..XX", "XX. XX    XX .XX", "XX..XX    XX..XX",
-            "XX. X      X .XX", "XX..X      X..XX", "XX.    XX    .XX",
-            "XX.XXXXXXXXXX.XX"}};
+  const byte pix[PIXSZ][PIXSZ2 + 1];
+} pixShp16x16 = {.mapSize = 3,
+                 .palMap =
+                     {// code -> r,g,b,a
+                      {' ', 0x4B, 0x5B, 0xAB, 0xFF},
+                      {'.', 0xFF, 0xFF, 0xFF, 0xFF},
+                      {'A', 0, 0, 0, 0}},
+                 .pix = {
+                 "AAAAAAAA", 
+                 "AAAAAAAA", 
+                 "AAAAAAAA", 
+                 "AAAAAAAA",
+                 "AAAAAAAA", 
+                 "AAAAAAAA", 
+                 "AAAAAAAA", 
+                 "AA.AAAA ",
+                 "AA..AAA ", 
+                 "AA. AA  ", 
+                 "AA..AA  ", 
+                 "AA. A   ",
+                 "AA..A   ", 
+                 "AA.    A", 
+                 "AA.AAAAA", 
+                 "AAAAAAAA"
+                 }};
 
 struct {
-  //pal256 pal;
+  // pal256 pal;
   const int mapSize;
   const byte palMap[3][5];
-  const byte pix[PIXSZ][PIXSZ + 1];
-} pixOppo16x16 = {
-    .mapSize = 3,
-    .palMap =
-        {// code -> r,g,b,a  #9F21C0
-         {'_', 0x9F, 0x21, 0xC0, 0xFF},
-         {'.', 0xFF, 0xFF, 0xFF, 0xFF},
-         {'X', 0, 0, 0, 0}},
-    .pix = {
-"XXXXXXXXXXXXXXXX",
-"XXXXX_____XXXXXX",
-"XXX_________XXXX",
-"XX_____._____XXX",
-"X______.______XX",
-"X____.....____XX",
-"____.__.__.____X",
-"____._____.____X",
-"__....___....__X",
-"____._____.____X",
-"____.__.__.____X",
-"X____.....____XX",
-"X______.______XX",
-"XX_____._____XXX",
-"XXX_________XXXX",
-"XXXXX_____XXXXXX"
-}
+  const byte pix[PIXSZ][PIXSZ2 + 1];
+} pixOppo16x16 = {.mapSize = 3,
+                  .palMap =
+                      {// code -> r,g,b,a  #9F21C0
+                       {'_', 0x9F, 0x21, 0xC0, 0xFF},
+                       {'.', 0xFF, 0xFF, 0xFF, 0xFF},
+                       {'A', 0, 0, 0, 0}},
+                  .pix = {"AAAAA___", "AAA_____", "AA_____.", "A______.",
+                          "A____...", "____.__.", "____.___", "__....__",
+                          "__....__", "____.___", "____.__.", "A____...",
+                          "A______.", "AA_____.", "AAA_____", "AAAAA___"}
 
 };
 
@@ -80,16 +76,16 @@ struct {
 */
 
 struct {
-  //pal256 pal;
+  // pal256 pal;
   const int mapSize;
   const byte palMap[2][5];
   const byte pix[5][30 + 1];
 } pixFont3x5 = {
     .mapSize = 2,
-    .palMap = {{'.', 0xFF, 0xFF, 0xFF, 0xFF}, {'X', 0, 0, 0, 0x00}},
-    .pix = {"...X.........X................", ".X.XX.XX.XX..X..XX.XXXX..X..X.",
-            ".X.XX....X...........X.X......", ".X.XX..XXXX.XX.XX..X..XX.X.XX.",
-            "...XX.......XX........XX......"}};
+    .palMap = {{'.', 0xFF, 0xFF, 0xFF, 0xFF}, {'A', 0, 0, 0, 0x00}},
+    .pix = {"...A.........A................", ".A.AA.AA.AA..A..AA.AAAA..A..A.",
+            ".A.AA....A...........A.A......", ".A.AA..AAAA.AA.AA..A..AA.A.AA.",
+            "...AA.......AA........AA......"}};
 
 /*
 struct {
@@ -110,11 +106,13 @@ struct {
 
 // распаковывает палитру изображения
 void unpakPalArray(int mapSize, const byte palMap[][5], pal256 pal) {
+  int colorIndex;
   for (int i = 0; i < mapSize; i++) {
-    pal[palMap[i][0]][0] = palMap[i][1];
-    pal[palMap[i][0]][1] = palMap[i][2];
-    pal[palMap[i][0]][2] = palMap[i][3];
-    pal[palMap[i][0]][3] = palMap[i][4];
+    colorIndex = palMap[i][0];
+    pal[colorIndex][0] = palMap[i][1];
+    pal[colorIndex][1] = palMap[i][2];
+    pal[colorIndex][2] = palMap[i][3];
+    pal[colorIndex][3] = palMap[i][4];
   }
 }
 
