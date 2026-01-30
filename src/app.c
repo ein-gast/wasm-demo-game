@@ -21,11 +21,11 @@ void putFontNumber(byte *canvas, int toX, int toY, int number);
 // будет помещено в таблицу ипорта из-за -Wl,--inport-undefiled
 // /* extern */ void extLog(int ptr);
 
-const char app_js[] = {
+const char js[] = {
 #ifdef APP_MIN_JS
-#embed "app.min.js"
+#embed "boot.min.js"
 #else
-#embed "app.js"
+#embed "boot.js"
 #endif
     , '\0' // null terminator
 };

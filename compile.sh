@@ -16,15 +16,15 @@ fi
 
 if test "$1" = "APP_MIN"; then
 CFLAGS="-D APP_MIN_JS"
-rm "$SRC/app.min.js" 2> /dev/null
-npx uglifyjs --toplevel --rename "$SRC/app.js" > "$SRC/app.min.js" || exit 1
+rm "$SRC/boot.min.js" 2> /dev/null
+npx uglifyjs --toplevel --rename "$SRC/boot.js" > "$SRC/boot.min.js" || exit 1
 echo "$1"
 fi
 
 "$CLANG" --target="$WARCH" --language=c --std=c23 -Oz --no-standard-libraries \
     $CFLAGS \
     -Wl,--export=init -Wl,--export=input -Wl,--export=process -Wl,--export=putImageData -Wl,--export=__heap_base \
-    -Wl,--export=app_js \
+    -Wl,--export=js \
     -Wl,--import-undefined \
     -Wl,--strip-all \
     -Wl,--no-entry \

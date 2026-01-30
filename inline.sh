@@ -34,7 +34,7 @@ esac
 
 # приписываем wasm к js:
 head -n 1 "$BUILD"/main0.js >"$BUILD"/main.js || exit 1
-tail -n+2 "$SRC"/app_tpl.js >>"$BUILD"/main.js || exit 1
+tail -n+2 "$SRC"/boot_tpl.js >>"$BUILD"/main.js || exit 1
 tail -n 1 "$BUILD"/main0.js >>"$BUILD"/main.js || exit 1
 rm "$BUILD"/main0.js
 
