@@ -15,6 +15,8 @@ const byte OTYPE_NONE = 0, //
 // размер растра
 #define PIXSZ (16)
 #define PIXSZ2 (PIXSZ / 2)
+// размер экрана
+#define CANVASZS (150)
 // сколько байт в пикселе пиксбуфера
 #define BPP (4)
 

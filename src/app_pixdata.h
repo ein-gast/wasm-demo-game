@@ -7,6 +7,7 @@ pal256 globalPal;
     unpakPalArray(raster.mapSize, raster.palMap, globalPal);                   \
   }
 
+
 struct {
   // pal256 pal;
   const int mapSize;
@@ -28,6 +29,8 @@ struct {
                     "A..AA   ",
                     "A.     .",
                  }};
+
+
 
 struct {
   // pal256 pal;
@@ -52,25 +55,6 @@ struct {
                   }
 };
 
-/*
-struct {
-  //byte pal[256][4];
-  const int mapSize;
-  const byte palMap[2][5];
-  const byte pix[PIXSZ][PIXSZ + 1];
-} pixRing16x16 = {
-    .mapSize = 2,
-    .palMap =
-        {// code -> r,g,b,a
-         {' ', 0xF2, 0xA6, 0x5E, 0xFF},
-         {'X', 0, 0, 0, 0}},
-    .pix = {"XXXXXX    XXXXXX", "XXXX        XXXX", "XXX   XXXX   XXX",
-            "XX   XXXXXX   XX", "XX  XXXXXXXX  XX", "X  XXXXXXXXXX  X",
-            "X  XXXXXXXXXX  X", "  XXXXXXXXXXXX  ", "  XXXXXXXXXXXX  ",
-            "  XXXXXXXXXXXX  ", "  XXXXXXXXXXXX  ", "X  XXXXXXXXXX  X",
-            "X   XXXXXXXX   X", "XX    XXXX    XX", "XXXX        XXXX",
-            "XXXXXX    XXXXXX"}};
-*/
 
 struct {
   // pal256 pal;
@@ -83,23 +67,6 @@ struct {
     .pix = {"...A.........A................", ".A.AA.AA.AA..A..AA.AAAA..A..A.",
             ".A.AA....A...........A.A......", ".A.AA..AAAA.AA.AA..A..AA.A.AA.",
             "...AA.......AA........AA......"}};
-
-/*
-struct {
-  //pal256 pal;
-  const int mapSize;
-  const byte palMap[2][5];
-  const byte pix[50][3+1];
-} pixVFont3x5 = {
-    .mapSize = 2,
-    .palMap = {{' ', 0xFF, 0xFF, 0xFF, 0xFF}, {'X', 0, 0, 0, 0x00}},
-    .pix = {"XXX", "X X", "X X", "X X", "XXX", " XX", "  X", "  X", "  X",
-            "  X", "XXX", "  X", "XXX", "X  ", "XXX", "XXX", "  X", " XX",
-            "  X", "XXX", "X X", "X X", "XXX", "  X", "  X", "XXX", "X  ",
-            "XXX", "  X", "XXX", "XXX", "X  ", "XXX", "X X", "XXX", "XXX",
-            "  X", " X ", "X  ", "X  ", "XXX", "X X", "XXX", "X X", "XXX",
-            "XXX", "X X", "XXX", "  X", "XXX"}};
-*/
 
 // распаковывает палитру изображения
 void unpakPalArray(int mapSize, const byte palMap[][5], pal256 pal) {

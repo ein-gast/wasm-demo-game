@@ -10,7 +10,7 @@ let _C, _T, S = 150, BS = S * S * 4, _E = inst.exports,
 _C.style = `width:${WH90};height:${WH90};image-rendering:pixelated`
 // ---
 
-_E.init(S)
+_E.init()
 // обработка физики
 setInterval((_) => _E.process(), 16 /*1000/60=16*/);
 // ввод

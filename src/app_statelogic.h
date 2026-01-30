@@ -4,7 +4,7 @@
 
 struct {
   // viewport size and pos
-  int vpY, vpS;
+  int vpY /*, vpS*/;
   // player
   int plY, plX, plXDir;
   // powerups
@@ -43,14 +43,14 @@ void o_player() {
 }
 
 void o_ering(int i) {
-  if (state.obj[i].y < state.vpY - state.vpS - PIXSZ) {
+  if (state.obj[i].y < state.vpY - CANVASZS - PIXSZ) {
     state.obj[i].type = OTYPE_NONE;
     return;
   }
 }
 
 // void o_ebox(int i) {
-//   if (state.obj[i].y < state.vpY - state.vpS - PIXSZ) {
+//   if (state.obj[i].y < state.vpY - CANVASZS - PIXSZ) {
 //     state.obj[i].type = OTYPE_NONE;
 //     return;
 //   }
