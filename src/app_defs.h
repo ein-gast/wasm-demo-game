@@ -5,12 +5,12 @@ typedef unsigned char byte;
 // типы объектов
 const byte OTYPE_NONE = 0, //
     OTYPE_ERING = 1,       // противник №1
-    //OTYPE_EBOX = 2,        // противник №2
-    //OTYPE_PWPN = 101,      // буст оружия
-    //OTYPE_PSHLD = 102,     // буст защиты
-    OTYPE_BNORM = 201     // снаряд нормальный
-    //OTYPE_BPOWER = 202    // снаряд усиленный
-;
+    // OTYPE_EBOX = 2,        // противник №2
+    // OTYPE_PWPN = 101,      // буст оружия
+    // OTYPE_PSHLD = 102,     // буст защиты
+    OTYPE_BNORM = 201 // снаряд нормальный
+    // OTYPE_BPOWER = 202    // снаряд усиленный
+    ;
 
 // размер растра
 #define PIXSZ (16)
@@ -30,14 +30,24 @@ typedef struct {
 } objState;
 
 typedef struct {
-  byte r, g, b;
+  union {
+    byte v[3];
+    struct {
+      byte r, g, b;
+    };
+  };
 } col3;
 
 typedef struct {
-  byte r, g, b, a;
+  union {
+    byte v[4];
+    struct {
+      byte r, g, b, a;
+    };
+  };
 } col4;
 
-//typedef col4 pal256[256];
+// typedef col4 pal256[256];
 typedef byte pal256[256][4];
 
 typedef struct {
@@ -51,6 +61,11 @@ typedef struct {
   xLeft   mxLeft  |    xRight
       V      V    V     V
   ----|      |----|     |----
+
+mXRigth = mxLeft = -1
+  xLeft              xRight
+      V               V
+  ----|               |----
 */
 typedef struct {
   int y;
@@ -67,3 +82,8 @@ typedef struct {
 #define LITCNT (PROJCNT * 2) // источники света
 #define WALCNT (20)          // секции стен
 #define OBJCNT (WALCNT * 20) // противники и поверапы
+
+// макросы-хелперы
+
+#define min(a, b) ((a) < (b) ? (a) : (b))
+#define max(a, b) ((a) > (b) ? (a) : (b))
