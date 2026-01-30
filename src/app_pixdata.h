@@ -73,10 +73,10 @@ void unpakPalArray(int mapSize, const byte palMap[][5], pal256 pal) {
   int colorIndex;
   for (int i = 0; i < mapSize; i++) {
     colorIndex = palMap[i][0];
-    pal[colorIndex][0] = palMap[i][1];
-    pal[colorIndex][1] = palMap[i][2];
-    pal[colorIndex][2] = palMap[i][3];
-    pal[colorIndex][3] = palMap[i][4];
+    pal[colorIndex].r = palMap[i][1];
+    pal[colorIndex].g = palMap[i][2];
+    pal[colorIndex].b = palMap[i][3];
+    pal[colorIndex].a = palMap[i][4];
   }
 }
 

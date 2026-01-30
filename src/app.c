@@ -209,7 +209,7 @@ void putImageData(byte *input) {
   for (int y = 0; y < CANVASZS; y++) {
     for (int x = 0; x < CANVASZS; x++) {
       i = (x + y * CANVASZS) * BPP;
-      drawPixel4(input, x, y, 0, 0, 0, 255);
+      drawPixel4(input, x, y, clearColor.r, clearColor.g, clearColor.b, 255);
     }
   }
 
@@ -277,6 +277,7 @@ void putImageData(byte *input) {
 void putBitmap(byte *canvas, int toX, int toY, bool vMirror,
                const byte pix[][PIXSZ2 + 1]) {
   int fx, fy;
+  col4 *col;
   toX -= PIXSZ2;
   toY -= PIXSZ2;
   for (int py = 0; py < PIXSZ; py++) {
@@ -287,12 +288,8 @@ void putBitmap(byte *canvas, int toX, int toY, bool vMirror,
     }
     for (int px = 0; px < PIXSZ; px++) {
       fx = px < PIXSZ2 ? px : PIXSZ - px - 1;
-
-      if (!globalPal[pix[fy][fx]][3]) {
-        continue;
-      }
-      drawPixel4(canvas, toX + px, toY + py, globalPal[pix[fy][fx]][0],
-                 globalPal[pix[fy][fx]][1], globalPal[pix[fy][fx]][2], 255);
+      col = globalPal + pix[fy][fx];
+      drawPixel4(canvas, toX + px, toY + py, col->r, col->g, col->b, col->a);
     }
   }
 }
@@ -300,20 +297,16 @@ void putBitmap(byte *canvas, int toX, int toY, bool vMirror,
 void putFontNumber(byte *canvas, int toX, int toY, int number) {
   // auto pal = pixFont3x5.pal;
   auto pix = pixFont3x5.pix;
-  int ofs, digitX, rangeX = 0;
-
+  int digitX, rangeX = 0;
+  col4 *col;
   do {
     digitX = (number % 10) * 3;
 
     for (int py = 0; py < 5; py++) {
       for (int px = 0; px < 3; px++) {
-        ofs = digitX + px;
-        if (!globalPal[pix[py][ofs]][3]) {
-          continue;
-        }
-        drawPixel4(canvas, toX - rangeX + px, toY + py,
-                   globalPal[pix[py][ofs]][0], globalPal[pix[py][ofs]][1],
-                   globalPal[pix[py][ofs]][2], 255);
+        col = globalPal + pix[py][digitX + px];
+        drawPixel4(canvas, toX - rangeX + px, toY + py, col->r, col->g, col->b,
+                   col->a);
       }
     }
 

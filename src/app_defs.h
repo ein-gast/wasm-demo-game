@@ -49,8 +49,8 @@ typedef struct {
   };
 } col4;
 
-// typedef col4 pal256[256];
-typedef byte pal256[256][4];
+typedef col4 pal256[256];
+//typedef byte pal256[256][4];
 
 typedef struct {
   int x, y;
