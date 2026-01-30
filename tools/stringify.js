@@ -5,7 +5,7 @@ const data = fs.readFileSync(fileName);
 
 if (fileName.endsWith(".gz")) {
     console.log(
-        `new Blob([new Uint8Array([${new Uint8Array(data).toString()}])])` +
+        `U=Uint8Array;new Blob([new U([${new Uint8Array(data).toString()}])])` +
         `.stream().pipeThrough(new DecompressionStream("gzip"))` +
         `.getReader().read().then((z)=>{Z=z.value;`,
         "\n})",
@@ -15,7 +15,7 @@ if (fileName.endsWith(".gz")) {
 
 if (fileName.endsWith(".base64")) {
     console.log(
-        `const Z = Uint8Array.from(atob('${data.toString()}'), c => c.charCodeAt(0))`,
+        `U = Uint8Array; Z = U.from(atob('${data.toString()}'), c => c.charCodeAt(0))`,
         "\n/*-*/",
     )
     return 0;
@@ -24,7 +24,7 @@ if (fileName.endsWith(".base64")) {
 if (fileName.endsWith(".wasm")) {
 
     console.log(
-        `const Z = new Uint8Array([${new Uint8Array(data).toString()}]);`,
+        `U = Uint8Array; Z = new U([${new Uint8Array(data).toString()}]);`,
         // 'const code = new Uint8Array(' + JSON.stringify(encodeRLE1(new Uint8Array(data))) + '.reduce((res,val)=>res.concat(val[0] ? Array(val[0]).fill(val[1]) : val.slice(1)),[]));',
         // 'const code = new Uint8Array(' + JSON.stringify(encodeRLE2(new Uint8Array(data))) + '.reduce((res,val)=>res.concat(typeof(val)==="object"?Array(val[0]).fill(val[1]):[val]),[]));',
         "\n/*-*/",
