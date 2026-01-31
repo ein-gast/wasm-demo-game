@@ -32,12 +32,12 @@ fi
 
 chmod -x "$BUILD"/app.wasm
 
-if test ! -f tools/small-wasm-trimmer.bin; then
-"$CLANG" -o tools/small-wasm-trimmer.bin tools/small-wasm-trimmer.c || exit 1
+if test ! -f 3d-party/small-wasm-trimmer.bin; then
+"$CLANG" -o 3d-party/small-wasm-trimmer.bin 3d-party/small-wasm-trimmer.c || exit 1
 fi
 
 mv "$BUILD"/app.wasm "$BUILD"/app~.wasm || exit 1
-tools/small-wasm-trimmer.bin --remove-sections producers < "$BUILD"/app~.wasm > "$BUILD"/app.wasm || exit 1
+3d-party/small-wasm-trimmer.bin --remove-sections producers < "$BUILD"/app~.wasm > "$BUILD"/app.wasm || exit 1
 rm "$BUILD"/app~.wasm
 
 gzip -nm -kf "$BUILD"/app.wasm
