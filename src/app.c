@@ -13,6 +13,11 @@
 #define _COMPILE_RND_
 #include "app_rnd.h"
 
+#define init() I()
+#define keyInput() K()
+#define process() P()
+#define renderFrame(input) R(input)
+
 void putBitmap(byte *canvas, int toX, int toY, bool vMirror,
                const byte pix[][PIXSZ2 + 1]);
 void putProj(byte *canvas, int toX, int toY);
@@ -48,7 +53,8 @@ void drawPixel4(byte *canvas, int toX, int toY, byte r, byte g, byte b,
   }
 }
 
-void init() {
+/* I() = init() */
+void I() {
   for (int i = 0; i < OBJCNT; i++) {
     state.obj[i].type = OTYPE_NONE;
   }
@@ -73,14 +79,16 @@ void init() {
   level0(state.obj, CANVASZS);
 }
 
-void input(/*int code1, int code2*/) {
+/* K() = keyInput() */
+void K(/*int code1, int code2*/) {
   if (state.gameover && state.timer == 0) {
     init();
   }
   state.plXDir = -state.plXDir;
 }
 
-void process() {
+/* P() = process() */
+void P() {
   static unsigned int procFrame = 0;
 
   // timer
@@ -184,7 +192,8 @@ void process() {
   // extLog(procFrame);
 }
 
-void putImageData(byte *input) {
+/* R(input) = renderFrame(input) */
+void R(byte *input) {
   static unsigned int frame = 0;
 
 #ifdef WITH_LIGHT

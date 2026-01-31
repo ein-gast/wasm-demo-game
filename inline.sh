@@ -19,12 +19,14 @@ case "$OP" in
 "GZipArray")
     OUT_HTML="$BUILD"/app_G.html
     node tools/stringify.js "$BUILD"/app.wasm.gz >"$BUILD"/main0.js || exit 1
-    :>"$BUILD"/main.js
     ;;
 "Base64")
     OUT_HTML="$BUILD"/app_B.html
     node tools/stringify.js "$BUILD"/app.wasm.base64 >"$BUILD"/main0.js || exit 1
-    :>"$BUILD"/main.js
+    ;;
+"GZipBase64")
+    OUT_HTML="$BUILD"/app_Z.html
+    node tools/stringify.js "$BUILD"/app.wasm.gz.base64 >"$BUILD"/main0.js || exit 1
     ;;
 *)
     echo "??? $OP"
@@ -32,15 +34,19 @@ case "$OP" in
     ;;
 esac
 
+:>"$BUILD"/main-$OP.js
+
 # приписываем wasm к js:
-head -n 1 "$BUILD"/main0.js >"$BUILD"/main.js || exit 1
-tail -n+2 "$SRC"/boot_tpl.js >>"$BUILD"/main.js || exit 1
-tail -n 1 "$BUILD"/main0.js >>"$BUILD"/main.js || exit 1
+head -n 1 "$BUILD"/main0.js >"$BUILD"/main-$OP.js || exit 1
+tail -n+2 "$SRC"/boot_tpl.js >>"$BUILD"/main-$OP.js || exit 1
+tail -n 1 "$BUILD"/main0.js >>"$BUILD"/main-$OP.js || exit 1
 rm "$BUILD"/main0.js
 
 # минимизируем js:
-npx uglifyjs --toplevel --keep-fargs --rename "$BUILD"/main.js  > "$BUILD"/main.u.js  || exit 1
-npx regpack --reassignVars 0 "$BUILD"/main.u.js | sed -e 's/^stats:.*$//g' > "$BUILD"/main.z.js || exit 1
+npx uglifyjs --toplevel --keep-fargs --rename "$BUILD"/main-$OP.js  > "$BUILD"/main.u-$OP.js  || exit 1
+npx regpack --reassignVars 0 "$BUILD"/main.u-$OP.js | sed -e 's/^stats:.*$//g' > "$BUILD"/main.z-$OP.js || exit 1
+
+cp "$BUILD"/main.z-$OP.js "$BUILD"/main.z.js
 
 # встраиваем js в html:
 echo "$OUT_HTML"

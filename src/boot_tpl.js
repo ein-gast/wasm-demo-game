@@ -1,4 +1,4 @@
-U=Uint8Array;Z = new U([0, 0, 0]);
+U = Uint8Array; Z = new U([0, 0, 0]);
 WebAssembly.instantiate(Z)
     .then(({ instance: inst }) => {
         //console.log(instance.exports.js.value, instance.exports.memory.buffer)

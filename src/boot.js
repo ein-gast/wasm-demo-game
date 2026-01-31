@@ -11,14 +11,14 @@ let _C, _T, S = 150, BS = S * S * 4, _E = inst.exports,
 _C.style = `width:${WH90};height:${WH90};image-rendering:pixelated`
 // ---
 
-_E.init()
+_E.I()
 // обработка физики
-setInterval((_) => _E.process(), 16 /*1000/60=16*/);
+setInterval((_) => _E.P(), 16 /*1000/60=16*/);
 // ввод
-_C.onmousedown = document.onkeydown = (_) => _E.input()
+_C.onmousedown = document.onkeydown = (_) => _E.K()
 // рендер
 let processFrame = (_) => {
-    _E.putImageData(pixPtr)
+    _E.R(pixPtr)
     // const ret = _E.render(t, pixPtr)
     // console.log(ret)
     image.data.set(pixBuf)

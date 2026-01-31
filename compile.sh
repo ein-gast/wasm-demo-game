@@ -23,7 +23,7 @@ fi
 
 "$CLANG" --target="$WARCH" --language=c --std=c23 -Oz --no-standard-libraries \
     $CFLAGS \
-    -Wl,--export=init -Wl,--export=input -Wl,--export=process -Wl,--export=putImageData -Wl,--export=__heap_base \
+    -Wl,--export=I -Wl,--export=K -Wl,--export=P -Wl,--export=R -Wl,--export=__heap_base \
     -Wl,--export=js \
     -Wl,--import-undefined \
     -Wl,--strip-all \
@@ -34,5 +34,6 @@ chmod -x "$BUILD"/app.wasm
 
 gzip -nm -kf "$BUILD"/app.wasm
 base64 -w 0 "$BUILD"/app.wasm > "$BUILD"/app.wasm.base64
+base64 -w 0 "$BUILD"/app.wasm.gz > "$BUILD"/app.wasm.gz.base64
 
 echo COMPILED
