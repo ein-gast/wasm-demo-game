@@ -2,7 +2,7 @@
 
 . ./build.env || exit 1
 
-OP="Uint8"
+OP="GZipBase64"
 if test ! -z "$1"; then
     OP="$1"
 fi
