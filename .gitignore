@@ -3,3 +3,4 @@
 /_*
 /compile12.sh
 /src/*.min.js
+*.bin
