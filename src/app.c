@@ -21,7 +21,7 @@
 void putBitmap(byte *canvas, int toX, int toY, bool vMirror,
                const byte pix[][PIXSZ2 + 1]);
 void putProj(byte *canvas, int toX, int toY);
-void putWall(byte *canvas, const walSect *wal, col3 clearColor);
+void putWall(byte *canvas, const walSect *wal);
 void putFontNumber(byte *canvas, int toX, int toY, int number);
 
 // будет помещено в таблицу ипорта из-за -Wl,--inport-undefiled
@@ -36,19 +36,26 @@ const char js[] = {
     , '\0' // null terminator
 };
 
+const col4 colBgGamePlay = {10, 10, 10, 255};
+const col4 colBgGameOver = {120, 10, 10, 255};
+const col4 colWall = {100, 100, 100, 255};
+const col4 colProjectile = {0, 255, 0, 255};
+
+#ifdef WITH_LIGHT
 byte sum255(byte a, byte b) {
   int sum = a + b;
   return sum > 255 ? 255 : sum;
 }
+#endif
 
-void drawPixel4(byte *canvas, int toX, int toY, byte r, byte g, byte b,
-                byte a) {
-  if (a != 0 && toX > 0 && toY > 0 && toX <= CANVASZS && toY <= CANVASZS) {
+void drawPixel4(byte *canvas, int toX, int toY, const col4 *col) {
+  if (col->v[3] != 0 && toX > 0 && toY > 0 && toX <= CANVASZS &&
+      toY <= CANVASZS) {
     int ofs = toX + toY * CANVASZS;
     ofs *= BPP;
-    canvas[ofs + 0] = r;
-    canvas[ofs + 1] = g;
-    canvas[ofs + 2] = b;
+    canvas[ofs + 0] = col->v[0];
+    canvas[ofs + 1] = col->v[1];
+    canvas[ofs + 2] = col->v[2];
     canvas[ofs + 3] = 255;
   }
 }
@@ -208,17 +215,18 @@ void R(byte *input) {
     }
   }
 #endif
+
   int i = 0; //, cnt = state.vpS * state.vpS;
-  col3 clearColor = {10, 10, 10};
+  const col4 *clearColor = &colBgGamePlay;
   if (state.gameover) {
-    clearColor.r = 120;
+    clearColor = &colBgGameOver;
   }
 
   // clear - optimize?
   for (int y = 0; y < CANVASZS; y++) {
     for (int x = 0; x < CANVASZS; x++) {
       i = (x + y * CANVASZS) * BPP;
-      drawPixel4(input, x, y, clearColor.r, clearColor.g, clearColor.b, 255);
+      drawPixel4(input, x, y, clearColor);
     }
   }
 
@@ -231,7 +239,7 @@ void R(byte *input) {
       break;
     }
     sum++;
-    putWall(input, ws, clearColor);
+    putWall(input, ws);
     ws = walNext(ws);
   }
 
@@ -262,7 +270,8 @@ void R(byte *input) {
     case OTYPE_ERING:
       putBitmap(input, state.obj[i].x, state.vpY - state.obj[i].y, true,
                 pixOppo16x16.pix);
-      // drawXOppo(input, CANVASZS, state.obj[i].x, state.vpY - state.obj[i].y);
+      // drawXOppo(input, CANVASZS, state.obj[i].x, state.vpY -
+      // state.obj[i].y);
       break;
       // case OTYPE_EBOX:
       //   break;
@@ -298,7 +307,7 @@ void putBitmap(byte *canvas, int toX, int toY, bool vMirror,
     for (int px = 0; px < PIXSZ; px++) {
       fx = px < PIXSZ2 ? px : PIXSZ - px - 1;
       col = globalPal + pix[fy][fx];
-      drawPixel4(canvas, toX + px, toY + py, col->r, col->g, col->b, col->a);
+      drawPixel4(canvas, toX + px, toY + py, col);
     }
   }
 }
@@ -314,8 +323,7 @@ void putFontNumber(byte *canvas, int toX, int toY, int number) {
     for (int py = 0; py < 5; py++) {
       for (int px = 0; px < 3; px++) {
         col = globalPal + pix[py][digitX + px];
-        drawPixel4(canvas, toX - rangeX + px, toY + py, col->r, col->g, col->b,
-                   col->a);
+        drawPixel4(canvas, toX - rangeX + px, toY + py, col);
       }
     }
 
@@ -328,11 +336,11 @@ void putProj(byte *canvas, int toVpX, int toVpY) {
   int x1 = toVpX - PIXSZ2 + 2, y1 = toVpY;
   int x2 = toVpX + PIXSZ2 - 2, y2 = toVpY;
 
-  drawPixel4(canvas, x1, y1, 0, 255, 0, 255);
-  drawPixel4(canvas, x2, y2, 0, 255, 0, 255);
+  drawPixel4(canvas, x1, y1, &colProjectile);
+  drawPixel4(canvas, x2, y2, &colProjectile);
 }
 
-void putWall(byte *canvas, const walSect *wal, col3 clearColor) {
+void putWall(byte *canvas, const walSect *wal) {
   int y1 = state.vpY - wal->y - wal->yDist;
   int y2 = y1 + wal->yDist;
   if ((y1 > CANVASZS && y2 > CANVASZS) || (y1 < 0 && y2 < 0)) {
@@ -348,7 +356,7 @@ void putWall(byte *canvas, const walSect *wal, col3 clearColor) {
     for (x = 0; x < CANVASZS; x++) {
       if (x < wal->xLeft || x > wal->xRight ||
           (x >= wal->mXLeft && x <= wal->mXRight)) {
-        drawPixel4(canvas, x, y, 100, 100, 100, 255);
+        drawPixel4(canvas, x, y, &colWall);
       }
     }
   }
